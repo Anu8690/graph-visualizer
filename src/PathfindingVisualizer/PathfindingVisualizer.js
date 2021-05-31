@@ -22,7 +22,8 @@ class PathfindingVisualizer extends React.Component {
             mouseIsPressed: false,
             startNodePressed: false,
             finishNodePressed: false,
-            navbarHeight:0,
+            navbarHeight: 0,
+            weightWallToggle:false,
             // isStartNode: false,
             // isFinishNode: false,
             // isWallNode: false, // xxxxxxx
@@ -38,13 +39,17 @@ class PathfindingVisualizer extends React.Component {
         // console.log("Arguement passed = ",height);
         const navbarHeight = height;
         // console.log(navbarHeight);
-        this.setState({navbarHeight});
+        this.setState({ navbarHeight });
         // return navbarHeight;
     }
 
     toggleIsRunning = () => {
         let isRunning = !this.state.isRunning;
         this.setState({ isRunning });
+    }
+    toggleWeightWallToggle = () =>{
+        const weightWallToggle = !this.state.weightWallToggle;
+        this.setState({weightWallToggle});
     }
 
     getInitialGrid = (
@@ -76,7 +81,7 @@ class PathfindingVisualizer extends React.Component {
             parent: null,
             isNode: true,
             weight: 1,
-            costFromSource: (row === this.state.START_NODE_ROW && col === this.state.START_NODE_COL) ? 0:Number.POSITIVE_INFINITY,
+            costFromSource: (row === this.state.START_NODE_ROW && col === this.state.START_NODE_COL) ? 0 : Number.POSITIVE_INFINITY,
             // extraClassName:"",
         };
     };
@@ -93,11 +98,14 @@ class PathfindingVisualizer extends React.Component {
                         ).className = 'node';
                         node.isVisited = false;
                         node.parent = null;
+                        node.costFromSource = Number.POSITIVE_INFINITY;
                         // nodeClassName = 'node';
                     }
                     else if (node.isStart || node.isFinish) {
                         node.parent = null;
                         node.isVisited = false;
+                        if(node.isStart) node.costFromSource = 0;
+                        else node.costFromSource = Number.POSITIVE_INFINITY;
                     }
                 }
             }
@@ -111,14 +119,20 @@ class PathfindingVisualizer extends React.Component {
 
             for (const row of grid) {
                 for (const node of row) {
-                    if (node.isWall) {
+                    if (node.isWall ) {
                         document.getElementById(
                             `node-${node.row}-${node.col}`
                         ).className = 'node';
                         node.isVisited = false;
                         node.parent = null;
                         node.isWall = false;
+                        node.costFromSource = Number.POSITIVE_INFINITY;
                         // nodeClassName = 'node';
+                    }
+                    if (node.weight !==1)
+                    {
+                        node.weight = 1;
+                        node.costFromSource = node.isStart ? 0: Number.POSITIVE_INFINITY;
                     }
                 }
             }
@@ -154,7 +168,7 @@ class PathfindingVisualizer extends React.Component {
     }
 
     onCellDown = (row, col) => {
-        if (!this.state.isRunning) {
+        if (!this.state.isRunning && !this.state.weightWallToggle) {
 
             const grid = this.state.grid;
             if (!this.state.mouseIsPressed) {
@@ -184,6 +198,12 @@ class PathfindingVisualizer extends React.Component {
                     currentNode.isFinish = false;
                 }
             }
+        }
+        else if(!this.state.isRunning && this.state.weightWallToggle)
+        {
+            const grid = this.state.grid;
+            const currentNode = grid[row][col];
+            currentNode.weight = currentNode.weight+1;
         }
     }
     onCellEnter = (row, col) => {
@@ -247,13 +267,13 @@ class PathfindingVisualizer extends React.Component {
 
 
     componentWillMount = () => {
-        const ROW_COUNT = 2*Math.floor(Math.floor((document.documentElement.clientHeight - this.state.navbarHeight) / 25)/2)-3;
-        const COLUMN_COUNT = 2*Math.floor(Math.floor(document.documentElement.clientWidth / 25)/2)-3;
-        const START_NODE_ROW = Math.floor(ROW_COUNT/2);
+        const ROW_COUNT = 2 * Math.floor(Math.floor((document.documentElement.clientHeight - this.state.navbarHeight) / 25) / 2) - 3;
+        const COLUMN_COUNT = 2 * Math.floor(Math.floor(document.documentElement.clientWidth / 25) / 2) - 3;
+        const START_NODE_ROW = Math.floor(ROW_COUNT / 2);
         const FINISH_NODE_ROW = Math.floor(ROW_COUNT / 2);
         const START_NODE_COL = Math.floor(COLUMN_COUNT / 4);
-        const FINISH_NODE_COL = Math.floor( 3*COLUMN_COUNT / 4);
-        this.setState({ROW_COUNT, COLUMN_COUNT, START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL});
+        const FINISH_NODE_COL = Math.floor(3 * COLUMN_COUNT / 4);
+        this.setState({ ROW_COUNT, COLUMN_COUNT, START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL });
     }
     componentDidMount = () => {
         const grid = this.getInitialGrid();
@@ -292,7 +312,7 @@ class PathfindingVisualizer extends React.Component {
             }
 
             // console.log(visitedNodesInOrder);
-            console.log(grid);
+            // console.log(grid);
             const nodesInShortestPathOrder = this.getNodesInShortestPathOrder(finishNode);
             nodesInShortestPathOrder.push('end');
             this.animate(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -375,12 +395,13 @@ class PathfindingVisualizer extends React.Component {
                 <Navbar
                     dfs={() => this.visualize('DFS')}
                     bfs={() => this.visualize('BFS')}
-                    dijkstra={()  => this.visualize('Dijkstra')}
+                    dijkstra={() => this.visualize('Dijkstra')}
                     clearGrid={() => this.clearGrid()}
                     resetGrid={() => this.resetGrid()}
                     clearWallsandWeights={() => this.clearWallsandWeights()}
                     mazify={() => this.mazify()}
                     navbarHeight={this.navbarHeight}
+                    weightWallToggle={()=>this.toggleWeightWallToggle()}
                 ></Navbar>
                 <table className="center grid-container" >
                     <tbody className="grid">
@@ -390,7 +411,7 @@ class PathfindingVisualizer extends React.Component {
                                     <tr key={rowID} >
                                         {
                                             row.map((node, nodeID) => {
-                                                const { row, col, isFinish, isStart, isWall,weight } = node;
+                                                const { row, col, isFinish, isStart, isWall, weight } = node;
 
                                                 return (
                                                     <Node

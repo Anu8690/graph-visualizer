@@ -9,6 +9,7 @@ class Navbar extends React.Component {
         super(props);
         this.state = {
             visualize:'',
+            weightOrWall : false,
         }
     }
     onVisualizeClick = () => {
@@ -36,6 +37,11 @@ class Navbar extends React.Component {
     }
     dijkstraClick = ()=>{
         this.setState({ visualize: 'Dijkstra' });
+    }
+    onWeightWallToggleClick = () =>{
+        const weightOrWall = !this.state.weightOrWall;
+        this.setState({weightOrWall});
+        this.props.weightWallToggle();
     }
     componentDidMount = ()=> {
         // console.log(document.getElementById("navbarDiv").clientHeight);
@@ -83,7 +89,7 @@ class Navbar extends React.Component {
                                     <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li> */}
                                 </ul>
                             </li>
-                            <li id='startButtonAddObject'><a href="#">Add Bomb</a></li>
+                            <li id='startButtonAddObject'><a href="#" onClick = {this.onWeightWallToggleClick}>Add {this.state.weightOrWall ? 'Wall':'Weight'}</a></li>
                             <li id='startButtonStart'><button id="actualStartButton" className="btn btn-default navbar-btn" type="button" onClick = {this.onVisualizeClick}>Visualize {this.state.visualize}!</button></li>
                             <li id='startButtonClearBoard'><a href="#" onClick = {resetGrid}>Clear Board</a></li>
                             <li id='startButtonClearWalls'><a href="#" onClick = {clearWallsandWeights}>Clear Walls &amp; Weights</a></li>
