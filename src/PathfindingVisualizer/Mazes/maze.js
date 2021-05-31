@@ -14,6 +14,8 @@ function createNode (row,col,finishNode,startNode){
             row === srow && col === scol,
         isFinish:
             row === frow && col === fcol,
+        weight :1,
+        costFromSource: (row === srow && col === scol) ? 0 : Number.POSITIVE_INFINITY,
     };
 }
 

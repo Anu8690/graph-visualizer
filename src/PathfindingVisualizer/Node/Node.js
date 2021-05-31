@@ -8,6 +8,7 @@ class Node extends React.Component {
         const {
             row,
             col,
+            weight,
             isFinish,
             isStart,
             isWall,
@@ -16,7 +17,8 @@ class Node extends React.Component {
             onMouseUp,
             onMouseLeave,
         } = this.props;
-        const extraClassName = isFinish ? "node-finish" : isStart ? "node-start" : isWall ? "node-wall" : "";
+        const isWeight = (weight!==0);
+        const extraClassName = isFinish ? "node-finish" : isStart ? "node-start" : isWall ? "node-wall" :isWeight ? "node-weight" : "";
         return (
             <td
                 id={`node-${row}-${col}`}
@@ -25,7 +27,7 @@ class Node extends React.Component {
                 onMouseEnter={() => onMouseEnter(row, col)}
                 onMouseUp={() => onMouseUp()}
                 onMouseLeave={() => onMouseLeave(row,col)}
-            ></td> // It is used to create the grid.
+            >{weight === 1?"":weight}</td> // It is used to create the grid.
         );
     }
 }

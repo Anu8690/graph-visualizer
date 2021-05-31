@@ -20,9 +20,9 @@ class Navbar extends React.Component {
             case 'DFS':
                 this.props.dfs();
                 break;
-            // case 'Dijkstra':
-            //     this.props.dijkstra();
-            //     break;
+            case 'Dijkstra':
+                this.props.dijkstra();
+                break;
             default:
                 alert('Choose an algorithm for visualization!!');
         }
@@ -33,6 +33,9 @@ class Navbar extends React.Component {
     }
     dfsClick = ()=>{
         this.setState({ visualize: 'DFS' });
+    }
+    dijkstraClick = ()=>{
+        this.setState({ visualize: 'Dijkstra' });
     }
     componentDidMount = ()=> {
         // console.log(document.getElementById("navbarDiv").clientHeight);
@@ -58,7 +61,7 @@ class Navbar extends React.Component {
                                 <a className="dropdown-toggle" data-toggle="dropdown" href="#">Algorithms
              <span className="caret"></span></a>
                                 <ul className="dropdown-menu">
-                                    <li id='startButtonDijkstra'><a href="#" onClick = {()=>{}}>Dijkstra's Algorithm</a></li>
+                                    <li id='startButtonDijkstra'><a href="#" onClick = {this.dijkstraClick}>Dijkstra's Algorithm</a></li>
                                     {/* <li id='startButtonAStar2'><a href="#">A* Search</a></li> */}
                                     {/* <li id='startButtonGreedy'><a href="#">Greedy Best-first Search</a></li>
                                     <li id='startButtonAStar'><a href="#">Swarm Algorithm</a></li> */}

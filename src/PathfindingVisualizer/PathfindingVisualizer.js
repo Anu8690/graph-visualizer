@@ -3,6 +3,7 @@ import Node from './Node/Node';
 import './PathfindingVisualizer.css'
 import { bfs } from './Algorithms/bfs'
 import { dfs } from './Algorithms/dfs'
+import { dijkstra } from './Algorithms/dijkstra'
 import { maze } from './Mazes/maze'
 import Navbar from '../Navbar';
 
@@ -74,7 +75,8 @@ class PathfindingVisualizer extends React.Component {
             isWall: false,
             parent: null,
             isNode: true,
-            weight: 0,
+            weight: 1,
+            costFromSource: (row === this.state.START_NODE_ROW && col === this.state.START_NODE_COL) ? 0:Number.POSITIVE_INFINITY,
             // extraClassName:"",
         };
     };
@@ -256,6 +258,7 @@ class PathfindingVisualizer extends React.Component {
     componentDidMount = () => {
         const grid = this.getInitialGrid();
         this.setState({ grid });
+        // console.log(grid);
     }
 
 
@@ -271,9 +274,9 @@ class PathfindingVisualizer extends React.Component {
                 grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
             let visitedNodesInOrder;
             switch (algo) {
-                // case 'Dijkstra':
-                //     visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-                //     break;
+                case 'Dijkstra':
+                    visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+                    break;
                 // case 'AStar':
                 //     visitedNodesInOrder = AStar(grid, startNode, finishNode);
                 //     break;
@@ -289,6 +292,7 @@ class PathfindingVisualizer extends React.Component {
             }
 
             // console.log(visitedNodesInOrder);
+            console.log(grid);
             const nodesInShortestPathOrder = this.getNodesInShortestPathOrder(finishNode);
             nodesInShortestPathOrder.push('end');
             this.animate(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -371,6 +375,7 @@ class PathfindingVisualizer extends React.Component {
                 <Navbar
                     dfs={() => this.visualize('DFS')}
                     bfs={() => this.visualize('BFS')}
+                    dijkstra={()  => this.visualize('Dijkstra')}
                     clearGrid={() => this.clearGrid()}
                     resetGrid={() => this.resetGrid()}
                     clearWallsandWeights={() => this.clearWallsandWeights()}
@@ -385,13 +390,14 @@ class PathfindingVisualizer extends React.Component {
                                     <tr key={rowID} >
                                         {
                                             row.map((node, nodeID) => {
-                                                const { row, col, isFinish, isStart, isWall } = node;
+                                                const { row, col, isFinish, isStart, isWall,weight } = node;
 
                                                 return (
                                                     <Node
                                                         key={nodeID}
                                                         row={row}
                                                         col={col}
+                                                        weight={weight}
                                                         isFinish={isFinish}
                                                         isStart={isStart}
                                                         isWall={isWall}
