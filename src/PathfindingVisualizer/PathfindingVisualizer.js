@@ -2,7 +2,10 @@ import React from 'react';
 import Node from './Node/Node';
 import './PathfindingVisualizer.css'
 import { bfs } from './Algorithms/bfs'
+import { dfs } from './Algorithms/dfs'
 import { maze } from './Mazes/maze'
+import Navbar from '../Navbar';
+
 class PathfindingVisualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -16,8 +19,9 @@ class PathfindingVisualizer extends React.Component {
             FINISH_NODE_COL: 30,
             isRunning: false,
             mouseIsPressed: false,
-            startNodePressed:false,
-            finishNodePressed:false,
+            startNodePressed: false,
+            finishNodePressed: false,
+            navbarHeight:0,
             // isStartNode: false,
             // isFinishNode: false,
             // isWallNode: false, // xxxxxxx
@@ -27,6 +31,14 @@ class PathfindingVisualizer extends React.Component {
         };
         // this.handleMouseLeave = this.handleMouseLeave.bind(this);
 
+    }
+
+    navbarHeight = (height) => {
+        // console.log("Arguement passed = ",height);
+        const navbarHeight = height;
+        // console.log(navbarHeight);
+        this.setState({navbarHeight});
+        // return navbarHeight;
     }
 
     toggleIsRunning = () => {
@@ -62,6 +74,7 @@ class PathfindingVisualizer extends React.Component {
             isWall: false,
             parent: null,
             isNode: true,
+            weight: 0,
             // extraClassName:"",
         };
     };
@@ -86,107 +99,31 @@ class PathfindingVisualizer extends React.Component {
                     }
                 }
             }
+            this.setState({ grid });
             // console.log(grid);
         }
     }
-
-    onCellDown = (row, col) => {
+    clearWallsandWeights = () => {
         if (!this.state.isRunning) {
-            
-            const grid = this.state.grid;
-            if (!this.state.mouseIsPressed) {
-                const mouseIsPressed = !this.state.mouseIsPressed;
-                this.setState({ mouseIsPressed });
-                const currentNode = grid[row][col];
-                if (!currentNode.isStart && !currentNode.isFinish) {
-                    if (currentNode.isWall) {
-                        document.getElementById(`node-${row}-${col}`).className = 'node';
-                        currentNode.isWall = false;
-                    }
-                    else {
-                        document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
-                        currentNode.isWall = true;
+            let grid = this.state.grid;
+
+            for (const row of grid) {
+                for (const node of row) {
+                    if (node.isWall) {
+                        document.getElementById(
+                            `node-${node.row}-${node.col}`
+                        ).className = 'node';
+                        node.isVisited = false;
+                        node.parent = null;
+                        node.isWall = false;
+                        // nodeClassName = 'node';
                     }
                 }
-                else if(currentNode.isStart)
-                {
-                    const startNodePressed = !this.state.startNodePressed;
-                    this.setState({startNodePressed});
-                    document.getElementById(`node-${row}-${col}`).className = 'node';
-                    currentNode.isStart = false;
-                }
-                else if(currentNode.isFinish)
-                {
-                    const finishNodePressed = !this.state.finishNodePressed;
-                    this.setState({ finishNodePressed });
-                    document.getElementById(`node-${row}-${col}`).className = 'node';
-                    currentNode.isFinish = false;
-                }
             }
+            this.setState({ grid });
+
+            // console.log(grid);
         }
-    }
-    onCellEnter = (row, col) => {
-        if (!this.state.isRunning && this.state.mouseIsPressed) {
-            const grid = this.state.grid;
-            const currentNode = grid[row][col];
-            if (!currentNode.isStart && !currentNode.isFinish && !this.state.startNodePressed && !this.state.finishNodePressed) {
-                document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
-                currentNode.isWall = true;
-            }
-            else if(this.state.startNodePressed)
-            {
-                const START_NODE_ROW = row;
-                const START_NODE_COL = col;
-                this.setState({START_NODE_ROW,START_NODE_COL});
-                document.getElementById(`node-${row}-${col}`).className = 'node node-start';
-            }
-            else if(this.state.finishNodePressed)
-            {
-                const FINISH_NODE_ROW = row;
-                const FINISH_NODE_COL = col;
-                this.setState({FINISH_NODE_ROW,FINISH_NODE_COL});
-                document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
-            }
-            
-        }
-    }
-    onCellLeave = (row,col)=>{
-        const grid = this.state.grid;
-        if(this.state.startNodePressed)
-        {
-            if (!grid[row][col].isFinish && !grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node';
-            else if (grid[row][col].isFinish) document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
-            else if (grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
-        }
-        else if(this.state.finishNodePressed)
-        {
-            if (!grid[row][col].isStart && !grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node';
-            else if (grid[row][col].isStart) document.getElementById(`node-${row}-${col}`).className = 'node node-start';
-            else if (grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
-        }
-    }
-    onCellRelease = () => {
-        const mouseIsPressed = false;
-        const grid = this.state.grid;
-        if(this.state.startNodePressed)
-        {
-            const row = this.state.START_NODE_ROW;
-            const col = this.state.START_NODE_COL;
-            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
-            grid[row][col].isStart = true;
-            grid[row][col].isWall = false;
-        }
-        else if(this.state.finishNodePressed)
-        {
-            const row = this.state.FINISH_NODE_ROW;
-            const col = this.state.FINISH_NODE_COL;
-            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
-            grid[row][col].isFinish = true;
-            grid[row][col].isWall = false;
-        }
-        const startNodePressed = false;
-        const finishNodePressed = false;
-        this.setState({ mouseIsPressed ,startNodePressed,finishNodePressed,grid});
     }
     resetGrid = () => {
         if (!this.state.isRunning) {
@@ -209,13 +146,113 @@ class PathfindingVisualizer extends React.Component {
                     }
                 }
             }
-            this.setState({grid});
+            this.setState({ grid });
             // console.log(grid);
         }
     }
 
+    onCellDown = (row, col) => {
+        if (!this.state.isRunning) {
+
+            const grid = this.state.grid;
+            if (!this.state.mouseIsPressed) {
+                const mouseIsPressed = !this.state.mouseIsPressed;
+                this.setState({ mouseIsPressed });
+                const currentNode = grid[row][col];
+                if (!currentNode.isStart && !currentNode.isFinish) {
+                    if (currentNode.isWall) {
+                        document.getElementById(`node-${row}-${col}`).className = 'node';
+                        currentNode.isWall = false;
+                    }
+                    else {
+                        document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
+                        currentNode.isWall = true;
+                    }
+                }
+                else if (currentNode.isStart) {
+                    const startNodePressed = !this.state.startNodePressed;
+                    this.setState({ startNodePressed });
+                    document.getElementById(`node-${row}-${col}`).className = 'node';
+                    currentNode.isStart = false;
+                }
+                else if (currentNode.isFinish) {
+                    const finishNodePressed = !this.state.finishNodePressed;
+                    this.setState({ finishNodePressed });
+                    document.getElementById(`node-${row}-${col}`).className = 'node';
+                    currentNode.isFinish = false;
+                }
+            }
+        }
+    }
+    onCellEnter = (row, col) => {
+        if (!this.state.isRunning && this.state.mouseIsPressed) {
+            const grid = this.state.grid;
+            const currentNode = grid[row][col];
+            if (!currentNode.isStart && !currentNode.isFinish && !this.state.startNodePressed && !this.state.finishNodePressed) {
+                document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
+                currentNode.isWall = true;
+            }
+            else if (this.state.startNodePressed) {
+                const START_NODE_ROW = row;
+                const START_NODE_COL = col;
+                this.setState({ START_NODE_ROW, START_NODE_COL });
+                document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+            }
+            else if (this.state.finishNodePressed) {
+                const FINISH_NODE_ROW = row;
+                const FINISH_NODE_COL = col;
+                this.setState({ FINISH_NODE_ROW, FINISH_NODE_COL });
+                document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+            }
+
+        }
+    }
+    onCellLeave = (row, col) => {
+        const grid = this.state.grid;
+        if (this.state.startNodePressed) {
+            if (!grid[row][col].isFinish && !grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node';
+            else if (grid[row][col].isFinish) document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+            else if (grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
+        }
+        else if (this.state.finishNodePressed) {
+            if (!grid[row][col].isStart && !grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node';
+            else if (grid[row][col].isStart) document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+            else if (grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
+        }
+    }
+    onCellRelease = () => {
+        const mouseIsPressed = false;
+        const grid = this.state.grid;
+        if (this.state.startNodePressed) {
+            const row = this.state.START_NODE_ROW;
+            const col = this.state.START_NODE_COL;
+            document.getElementById(`node-${row}-${col}`).className = 'node node-start';
+            grid[row][col].isStart = true;
+            grid[row][col].isWall = false;
+        }
+        else if (this.state.finishNodePressed) {
+            const row = this.state.FINISH_NODE_ROW;
+            const col = this.state.FINISH_NODE_COL;
+            document.getElementById(`node-${row}-${col}`).className = 'node node-finish';
+            grid[row][col].isFinish = true;
+            grid[row][col].isWall = false;
+        }
+        const startNodePressed = false;
+        const finishNodePressed = false;
+        this.setState({ mouseIsPressed, startNodePressed, finishNodePressed, grid });
+    }
 
 
+
+    componentWillMount = () => {
+        const ROW_COUNT = 2*Math.floor(Math.floor((document.documentElement.clientHeight - this.state.navbarHeight) / 25)/2)-3;
+        const COLUMN_COUNT = 2*Math.floor(Math.floor(document.documentElement.clientWidth / 25)/2)-3;
+        const START_NODE_ROW = Math.floor(ROW_COUNT/2);
+        const FINISH_NODE_ROW = Math.floor(ROW_COUNT / 2);
+        const START_NODE_COL = Math.floor(COLUMN_COUNT / 4);
+        const FINISH_NODE_COL = Math.floor( 3*COLUMN_COUNT / 4);
+        this.setState({ROW_COUNT, COLUMN_COUNT, START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL});
+    }
     componentDidMount = () => {
         const grid = this.getInitialGrid();
         this.setState({ grid });
@@ -243,9 +280,9 @@ class PathfindingVisualizer extends React.Component {
                 case 'BFS':
                     visitedNodesInOrder = bfs(grid, startNode, finishNode);
                     break;
-                // case 'DFS':
-                //     visitedNodesInOrder = dfs(grid, startNode, finishNode);
-                //     break;
+                case 'DFS':
+                    visitedNodesInOrder = dfs(grid, startNode, finishNode);
+                    break;
                 default:
                     // should never get here
                     break;
@@ -288,7 +325,7 @@ class PathfindingVisualizer extends React.Component {
             if (nodesInShortestPathOrder[i] === 'end') {
                 setTimeout(() => {
                     this.toggleIsRunning();
-                    console.log("Completed");
+                    // console.log("Completed");
                 }, i * 50);
             } else {
                 setTimeout(() => {
@@ -318,22 +355,34 @@ class PathfindingVisualizer extends React.Component {
         return nodesInShortestPathOrder;
     }
 
-    mazify = ()=>{
-        const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-        const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL]; 
-        const grid = maze(this.state.ROW_COUNT,this.state.COLUMN_COUNT,startNode,finishNode);
-        this.setState({grid});
+    mazify = () => {
+        if (!this.state.isRunning) {
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            const grid = maze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+            this.setState({ grid });
+        }
+
     }
 
     render() {
         return (
             <div>
-                <table className="container grid-container" >
-                    <tbody>
+                <Navbar
+                    dfs={() => this.visualize('DFS')}
+                    bfs={() => this.visualize('BFS')}
+                    clearGrid={() => this.clearGrid()}
+                    resetGrid={() => this.resetGrid()}
+                    clearWallsandWeights={() => this.clearWallsandWeights()}
+                    mazify={() => this.mazify()}
+                    navbarHeight={this.navbarHeight}
+                ></Navbar>
+                <table className="center grid-container" >
+                    <tbody className="grid">
                         {
                             this.state.grid.map((row, rowID) => {
                                 return (
-                                    <tr key={rowID}>
+                                    <tr key={rowID} >
                                         {
                                             row.map((node, nodeID) => {
                                                 const { row, col, isFinish, isStart, isWall } = node;
@@ -349,21 +398,23 @@ class PathfindingVisualizer extends React.Component {
                                                         onMouseDown={(x, y) => { this.onCellDown(x, y) }}
                                                         onMouseEnter={(x, y) => this.onCellEnter(x, y)}
                                                         onMouseUp={() => this.onCellRelease()}
-                                                        onMouseLeave={(x,y)=>this.onCellLeave(x,y)}
+                                                        onMouseLeave={(x, y) => this.onCellLeave(x, y)}
                                                     ></Node>
                                                 );
                                             })
                                         }
+
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
-                <button onClick={() => this.visualize('BFS')}>BFS</button>
+                {/* <button onClick={() => this.visualize('BFS')}>BFS</button>
+                <button onClick={() => this.visualize('DFS')}>DFS</button>
                 <button onClick={() => this.clearGrid()}>Clear Gridd</button>
                 <button onClick={() => this.resetGrid()}>Reset Grid</button>
-                <button onClick={() => this.mazify()}>Maze</button>
+                <button onClick={() => this.mazify()}>Maze</button> */}
 
             </div>
         )

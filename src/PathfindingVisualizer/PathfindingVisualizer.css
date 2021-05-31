@@ -162,3 +162,9 @@
         content: "(View on Lanscape Mode) ";
       }
 }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
