@@ -11,6 +11,7 @@ import Navbar from '../Navbar';
 import {horizontalSkewMaze} from './Mazes/hSkewMaze';
 import { verticalSkewMaze } from './Mazes/vSkewMaze';
 import { kruskalMaze } from './Mazes/kruskalsMaze1';
+import {primMaze} from './Mazes/primsMaze';
 class PathfindingVisualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -419,6 +420,14 @@ class PathfindingVisualizer extends React.Component {
             this.setState({ grid });
         }
     }
+    primMazify = () => {
+        if (!this.state.isRunning) {
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            const grid = primMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+            this.setState({ grid });
+        }
+    }
     weightMazify = ()=>{
         let grid = this.state.grid;
         grid = weightMaze(grid);
@@ -443,7 +452,8 @@ class PathfindingVisualizer extends React.Component {
                     mazify={() => this.mazify()}
                     hmazify={() => this.hSkewMazify()}
                     vmazify={() => this.vSkewMazify()}
-                    kruskalMazify={()=>this.kruskalMazify()}
+                    kruskalMazify={() => this.kruskalMazify()}
+                    primMazify={() => this.primMazify()}
                     weightMazify={()=>this.weightMazify()}
                     wallMazify={() => this.wallMazify()}
                     navbarHeight={this.navbarHeight}

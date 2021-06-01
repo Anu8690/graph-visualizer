@@ -55,6 +55,7 @@ class Navbar extends React.Component {
             hmazify,
             vmazify,
             kruskalMazify,
+            primMazify,
             weightMazify,
             wallMazify,
             clearWallsandWeights,
@@ -90,6 +91,7 @@ class Navbar extends React.Component {
                                     <li id='startButtonCreateMazeThree'><a href="#" onClick = {vmazify}>Recursive Division (vertical skew)</a></li>
                                     <li id='startButtonCreateMazeFour'><a href="#" onClick={hmazify}>Recursive Division (horizontal skew)</a></li>
                                     <li id='startButtonCreateMazeFour'><a href="#" onClick={kruskalMazify}>Kruskal's Maze</a></li>
+                                    <li id='startButtonCreateMazeFour'><a href="#" onClick={primMazify}>Prims's Maze</a></li>
                                     <li id='startButtonCreateMazeOne'><a href="#" onClick = {wallMazify}>Basic Random Maze</a></li>
                                     <li id='startButtonCreateMazeWeights'><a href="#" onClick = {weightMazify}>Basic Weight Maze</a></li>
                                     {/* <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li> */}
