@@ -52,6 +52,8 @@ class Navbar extends React.Component {
             clearGrid,
             resetGrid,
             mazify,
+            weightMazify,
+            wallMazify,
             clearWallsandWeights,
         } = this.props;
 
@@ -83,10 +85,10 @@ class Navbar extends React.Component {
                                 <ul className="dropdown-menu">
                                     <li id='startButtonCreateMazeTwo'><a href="#" onClick = {mazify}>Recursive Division</a></li>
                                     {/* <li id='startButtonCreateMazeThree'><a href="#">Recursive Division (vertical skew)</a></li>
-                                    <li id='startButtonCreateMazeFour'><a href="#">Recursive Division (horizontal skew)</a></li>
-                                    <li id='startButtonCreateMazeOne'><a href="#">Basic Random Maze</a></li>
-                                    <li id='startButtonCreateMazeWeights'><a href="#">Basic Weight Maze</a></li>
-                                    <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li> */}
+                                    <li id='startButtonCreateMazeFour'><a href="#">Recursive Division (horizontal skew)</a></li> */}
+                                    <li id='startButtonCreateMazeOne'><a href="#" onClick = {wallMazify}>Basic Random Maze</a></li>
+                                    <li id='startButtonCreateMazeWeights'><a href="#" onClick = {weightMazify}>Basic Weight Maze</a></li>
+                                    {/* <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li> */}
                                 </ul>
                             </li>
                             <li id='startButtonAddObject'><a href="#" onClick = {this.onWeightWallToggleClick}>Add {this.state.weightOrWall ? 'Wall':'Weight'}</a></li>

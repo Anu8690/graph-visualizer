@@ -5,6 +5,8 @@ import { bfs } from './Algorithms/bfs'
 import { dfs } from './Algorithms/dfs'
 import { dijkstra } from './Algorithms/dijkstra'
 import { maze } from './Mazes/maze'
+import { weightMaze } from './Mazes/weightMaze'
+import { wallMaze } from './Mazes/wallMaze'
 import Navbar from '../Navbar';
 
 class PathfindingVisualizer extends React.Component {
@@ -183,6 +185,7 @@ class PathfindingVisualizer extends React.Component {
                     else {
                         document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
                         currentNode.isWall = true;
+                        currentNode.weight=1;
                     }
                 }
                 else if (currentNode.isStart) {
@@ -194,7 +197,7 @@ class PathfindingVisualizer extends React.Component {
                 else if (currentNode.isFinish) {
                     const finishNodePressed = !this.state.finishNodePressed;
                     this.setState({ finishNodePressed });
-                    document.getElementById(`node-${row}-${col}`).className = 'node';
+                    document.getElementById(`node-${row}-${col}`).className = 'node' ;
                     currentNode.isFinish = false;
                 }
             }
@@ -203,7 +206,9 @@ class PathfindingVisualizer extends React.Component {
         {
             const grid = this.state.grid;
             const currentNode = grid[row][col];
-            currentNode.weight = currentNode.weight+1;
+            if(!currentNode.isWall){
+                currentNode.weight = currentNode.weight+1;
+            }
         }
     }
     onCellEnter = (row, col) => {
@@ -213,6 +218,7 @@ class PathfindingVisualizer extends React.Component {
             if (!currentNode.isStart && !currentNode.isFinish && !this.state.startNodePressed && !this.state.finishNodePressed) {
                 document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
                 currentNode.isWall = true;
+                currentNode.weight = 1;
             }
             else if (this.state.startNodePressed) {
                 const START_NODE_ROW = row;
@@ -336,8 +342,8 @@ class PathfindingVisualizer extends React.Component {
                     nodeClassName !== 'node node-start' &&
                     nodeClassName !== 'node node-finish'
                 ) {
-                    document.getElementById(`node-${node.row}-${node.col}`).className =
-                        'node node-visited';
+                    document.getElementById(`node-${node.row}-${node.col}`).className = 
+                        'node node-visited' ;
                 }
             }, 2 * i);
         }
@@ -358,10 +364,10 @@ class PathfindingVisualizer extends React.Component {
                         `node-${node.row}-${node.col}`,
                     ).className;
                     if (
-                        nodeClassName !== 'node node-start' &&
+                        nodeClassName !== 'node node-start'&&
                         nodeClassName !== 'node node-finish'
                     ) {
-                        document.getElementById(`node-${node.row}-${node.col}`).className =
+                        document.getElementById(`node-${node.row}-${node.col}`).className = 
                             'node node-shortest-path';
                     }
                 }, i * 40);
@@ -388,6 +394,16 @@ class PathfindingVisualizer extends React.Component {
         }
 
     }
+    weightMazify = ()=>{
+        let grid = this.state.grid;
+        grid = weightMaze(grid);
+        this.setState({grid});
+    }
+    wallMazify = ()=>{
+        let grid = this.state.grid;
+        grid = wallMaze(grid);
+        this.setState({ grid });
+    }
 
     render() {
         return (
@@ -400,6 +416,8 @@ class PathfindingVisualizer extends React.Component {
                     resetGrid={() => this.resetGrid()}
                     clearWallsandWeights={() => this.clearWallsandWeights()}
                     mazify={() => this.mazify()}
+                    weightMazify={()=>this.weightMazify()}
+                    wallMazify={() => this.wallMazify()}
                     navbarHeight={this.navbarHeight}
                     weightWallToggle={()=>this.toggleWeightWallToggle()}
                 ></Navbar>
