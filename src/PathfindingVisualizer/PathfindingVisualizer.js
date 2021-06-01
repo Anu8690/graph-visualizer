@@ -8,7 +8,9 @@ import { maze } from './Mazes/maze'
 import { weightMaze } from './Mazes/weightMaze'
 import { wallMaze } from './Mazes/wallMaze'
 import Navbar from '../Navbar';
-
+import {horizontalSkewMaze} from './Mazes/hSkewMaze';
+import { verticalSkewMaze } from './Mazes/vSkewMaze';
+import { kruskalMaze } from './Mazes/kruskalsMaze';
 class PathfindingVisualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -392,7 +394,30 @@ class PathfindingVisualizer extends React.Component {
             const grid = maze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
             this.setState({ grid });
         }
-
+    }
+    hSkewMazify = ()=>{
+        if(!this.state.isRunning){
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            const grid = horizontalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+            this.setState({ grid });
+        }
+    }
+    vSkewMazify = () => {
+        if (!this.state.isRunning) {
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            const grid = verticalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+            this.setState({ grid });
+        }
+    }
+    kruskalMazify = () =>{
+        if (!this.state.isRunning) {
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            const grid = kruskalMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+            this.setState({ grid });
+        }
     }
     weightMazify = ()=>{
         let grid = this.state.grid;
@@ -416,6 +441,9 @@ class PathfindingVisualizer extends React.Component {
                     resetGrid={() => this.resetGrid()}
                     clearWallsandWeights={() => this.clearWallsandWeights()}
                     mazify={() => this.mazify()}
+                    hmazify={() => this.hSkewMazify()}
+                    vmazify={() => this.vSkewMazify()}
+                    kruskalMazify={()=>this.kruskalMazify()}
                     weightMazify={()=>this.weightMazify()}
                     wallMazify={() => this.wallMazify()}
                     navbarHeight={this.navbarHeight}

@@ -72,8 +72,6 @@ function removeWall(nodeA,nodeB,grid){
 
     grid[r][c].isWall = false;
     return;
-    // return grid[r][c];
-
 }
 
 export function maze(rowNum,colNum,startNode,finishNode){

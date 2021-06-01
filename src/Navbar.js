@@ -52,6 +52,9 @@ class Navbar extends React.Component {
             clearGrid,
             resetGrid,
             mazify,
+            hmazify,
+            vmazify,
+            kruskalMazify,
             weightMazify,
             wallMazify,
             clearWallsandWeights,
@@ -84,8 +87,9 @@ class Navbar extends React.Component {
              <span className="caret"></span></a>
                                 <ul className="dropdown-menu">
                                     <li id='startButtonCreateMazeTwo'><a href="#" onClick = {mazify}>Recursive Division</a></li>
-                                    {/* <li id='startButtonCreateMazeThree'><a href="#">Recursive Division (vertical skew)</a></li>
-                                    <li id='startButtonCreateMazeFour'><a href="#">Recursive Division (horizontal skew)</a></li> */}
+                                    <li id='startButtonCreateMazeThree'><a href="#" onClick = {vmazify}>Recursive Division (vertical skew)</a></li>
+                                    <li id='startButtonCreateMazeFour'><a href="#" onClick={hmazify}>Recursive Division (horizontal skew)</a></li>
+                                    <li id='startButtonCreateMazeFour'><a href="#" onClick={kruskalMazify}>Kruskal's Maze</a></li>
                                     <li id='startButtonCreateMazeOne'><a href="#" onClick = {wallMazify}>Basic Random Maze</a></li>
                                     <li id='startButtonCreateMazeWeights'><a href="#" onClick = {weightMazify}>Basic Weight Maze</a></li>
                                     {/* <li id='startStairDemonstration'><a href="#">Simple Stair Pattern</a></li> */}
@@ -96,7 +100,7 @@ class Navbar extends React.Component {
                             <li id='startButtonClearBoard'><a href="#" onClick = {resetGrid}>Clear Board</a></li>
                             <li id='startButtonClearWalls'><a href="#" onClick = {clearWallsandWeights}>Clear Walls &amp; Weights</a></li>
                             <li id='startButtonClearPath'><a href="#" onClick={clearGrid}>Clear Path</a></li>
-                            <li className="dropdown">
+                            {/* <li className="dropdown">
                                 <a id="adjustSpeed" className="dropdown-toggle" data-toggle="dropdown" href="#">Speed: Fast
              <span className="caret"></span></a>
                                 <ul className="dropdown-menu">
@@ -104,7 +108,7 @@ class Navbar extends React.Component {
                                     <li id='adjustAverage'><a href="#">Average</a></li>
                                     <li id='adjustSlow'><a href="#">Slow</a></li>
                                 </ul>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </nav>
