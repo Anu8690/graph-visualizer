@@ -10,7 +10,7 @@ import { wallMaze } from './Mazes/wallMaze'
 import Navbar from '../Navbar';
 import {horizontalSkewMaze} from './Mazes/hSkewMaze';
 import { verticalSkewMaze } from './Mazes/vSkewMaze';
-import { kruskalMaze } from './Mazes/kruskalsMaze';
+import { kruskalMaze } from './Mazes/kruskalsMaze1';
 class PathfindingVisualizer extends React.Component {
     constructor(props) {
         super(props);
