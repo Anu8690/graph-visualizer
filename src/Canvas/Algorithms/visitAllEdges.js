@@ -7,6 +7,21 @@ const createEdge = (nodeA, nodeB) => {
     return edge;
 }
 
+const writeText = (info, style = {}) => {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext("2d");
+    const { text, x, y } = info;
+    const { fontSize = 20, fontFamily = 'Arial', color = 'black', textAlign = 'left', textBaseline = 'top' } = style;
+
+    ctx.beginPath();
+    ctx.font = fontSize + 'px ' + fontFamily;
+    ctx.textAlign = textAlign;
+    ctx.textBaseline = textBaseline;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+    ctx.stroke();
+}
+
 export function visitAllEdges(graph) {
     let canvas = document.getElementById('canvas');
     const ctx = canvas.getContext("2d");
@@ -19,13 +34,14 @@ export function visitAllEdges(graph) {
     });
 
     graph.forEach((node)=>{
+        writeText({ text: `${node.id}`, x: node.centerX - 35, y: node.centerY - 35 });
         if(!node.isVisited){
             
             ctx.strokeStyle = "#000000";
             let { centerX, centerY } = node;
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+            ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, true);
             ctx.stroke();
             ctx.closePath();
 

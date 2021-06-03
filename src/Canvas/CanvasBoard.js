@@ -13,36 +13,74 @@ function CanvasBoard(props) {
         nodesOfGraph,
         clearCanvas,
         pushNode,
+        setIndex,
     } = useContext(CanvasContext);
 
-    const emptyTheGraph = ()=>{
+    const emptyTheGraph = () => {
         pushNode([]);
+        setIndex(1);
     }
 
     useEffect(() => {
         prepareCanvas(props.height, props.width);
         clearCanvas();
+        props.settingStartNode(null);
+        props.settingEndNode(null);
     }, []);
+    const [startNode, setStartNode] = useState(0);
+    const [endNode, setEndNode] = useState(0);
     useEffect(() => {
         props.settingGraph(nodesOfGraph);
-        if(props.emptyGraphCall){
+        if(!startNode) props.settingStartNode((nodesOfGraph.length?nodesOfGraph[0]:null));
+        if(!endNode) props.settingEndNode(nodesOfGraph.length ? nodesOfGraph[nodesOfGraph.length-1] : null);
+        if (props.emptyGraphCall) {
             emptyTheGraph();
             props.toggleEmptyTheGraph();
         }
-    }, [nodesOfGraph,props.emptyGraphCall]);
+    }, [nodesOfGraph, props.emptyGraphCall]);
 
+    
+    const startNodeUpdate = (event)=>{
+        const startIndex = event.target.value;
+        setStartNode(startIndex);
+        console.log("start updated");
+        if(startIndex != 0 && startIndex<=nodesOfGraph.length) props.settingStartNode(nodesOfGraph[startIndex-1]);
+        else alert('Not a valid start node');
+    }
+    const endNodeUpdate = (event) => {
+        const endIndex = event.target.value;
+        setEndNode(endIndex);
+        console.log("end updated");
+        if (endIndex != 0 && endIndex<=nodesOfGraph.length) props.settingEndNode(nodesOfGraph[endIndex - 1]);
+        else alert('Not a valid start node');
+    }
     return (
         <>
             {/* <section id="canvas-container"> */}
-                <canvas id='canvas'
-                    className = "centercanvas"
-                    onMouseDown={startDrawing}
-                    onMouseUp={finishDrawing}
-                    onMouseMove={draw}
-                    ref={canvasRef}
-                ></canvas>
-            <button onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</button>
-                <br></br>
+            <div id="wrapper" class="toggled">
+                <div id="sidebar-wrapper">
+                    <ul className="sidebar-nav">
+                        <li className="sidebar-brand"> <a href="#"> Control Panel </a> </li>
+                        <li> <a href="#" onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</a> </li>
+                        <li>
+                            <a>Start Node</a>
+                            <input id="startValue" placeholder={nodesOfGraph.length ? '1' : '0'} onChange = {startNodeUpdate}/>
+                            <a>End Node</a>
+                            <input id="endValue" placeholder={nodesOfGraph.length} onChange = {endNodeUpdate}/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <canvas id='canvas'
+                className="centercanvas"
+                onMouseDown={startDrawing}
+                onMouseUp={finishDrawing}
+                onMouseMove={draw}
+                ref={canvasRef}
+            ></canvas>
+
+            <button ></button>
+            <br></br>
             {/* </section> */}
         </>
     )

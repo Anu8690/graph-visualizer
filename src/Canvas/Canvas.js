@@ -6,7 +6,6 @@ import { CanvasProvider } from './CanvasContext';
 import { bfs } from './Algorithms/bfs';
 import { dfs } from './Algorithms/dfs';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
-import Sidebar from './sideBar';
 
 let nheight = 0;
 let swidth=0;
@@ -15,28 +14,22 @@ class Canvas extends React.Component {
         super(props);
         this.state = {
             navbarHeight: 0,
-            sidebarWidth:0,
             height: 0,
             width: 0,
             graphOfNodes: [],
             isRunning: false,
             emptyGraphCall:false,
+            startNode: null,
+            endNode:null,
         }
     }
+    
     navbarHeight = (height) => {
         console.log("height = ",height);
         // const navbarHeight = height;
         // this.setState({ navbarHeight });
         nheight = height;
         console.log(nheight ," = nheight");
-    }
-    sidebarWidth = (width) => {
-        console.log("width = ",width);
-        swidth = width;
-        // const sidebarWidth = width;
-        // this.setState({ sidebarWidth});
-        // console.log(this.state.sidebarWidth);
-        console.log(swidth, " = swidth");
     }
     toggleEmptyTheGraph = ()=>{
         const emptyGraphCall = !this.state.emptyGraphCall;
@@ -50,6 +43,14 @@ class Canvas extends React.Component {
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
 
+    settingStartNode = (startNode) => {
+        this.setState({ startNode });
+        console.groupCollapsed("startnode updated success");
+    }
+    settingEndNode =  (endNode)=>{
+        this.setState({endNode});
+        console.groupCollapsed("endnode updated success");
+    }
     settingGraph = (graphOfNodes) => {
         this.setState({ graphOfNodes });
     }
@@ -68,7 +69,7 @@ class Canvas extends React.Component {
             }
             this.setState({ isRunning: true });
             this.redrawGraph();
-            let startNode = graphOfNodes[0], finishNode = graphOfNodes[graphOfNodes.length - 1];
+            let startNode = this.state.startNode, finishNode = this.state.endNode;
 
             let visitedNodesInOrder1;
             let visitedEdgesInOrder1;
@@ -202,13 +203,12 @@ class Canvas extends React.Component {
                         clearGrid = {()=>this.redrawGraph()}
                         resetGrid = {()=>this.clearCanvas()}
                     ></Navbar>
-                    <Sidebar
-                        sidebarWidth={this.sidebarWidth}
-                    ></Sidebar>
                     <CanvasBoard
                         height={height}
                         width={width}
                         settingGraph={this.settingGraph}
+                        settingStartNode={this.settingStartNode}
+                        settingEndNode={this.settingEndNode}
                         emptyGraphCall={this.state.emptyGraphCall}
                         toggleEmptyTheGraph={this.toggleEmptyTheGraph}
                     ></CanvasBoard>

@@ -2,13 +2,11 @@ import React, { useRef, useState } from "react";
 
 export const CanvasContext = React.createContext();
 
-let index = 0;
-
 export const CanvasProvider = ({ children }) => {
     const [isDrawing, setIsDrawing] = useState(false);
 
     const [nodeDrawing, setNodeDrawing] = useState(true);
-
+    const [index,setIndex] = useState(0);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
@@ -49,12 +47,27 @@ export const CanvasProvider = ({ children }) => {
         return node;
     }
 
+    const writeText = (info, style = {}) => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const { text, x, y } = info;
+        const { fontSize = 20, fontFamily = 'Arial', color = 'black', textAlign = 'left', textBaseline = 'top' } = style;
+
+        ctx.beginPath();
+        ctx.font = fontSize + 'px ' + fontFamily;
+        ctx.textAlign = textAlign;
+        ctx.textBaseline = textBaseline;
+        ctx.fillStyle = color;
+        ctx.fillText(text, x, y);
+        ctx.stroke();
+    }
+
     const startDrawing = ({ nativeEvent }) => {
         if (nodeDrawing) {
             const { offsetX, offsetY } = nativeEvent;
             if (whichNode(offsetX, offsetY)) return;
 
-            index = index + 1;
+            setIndex((prevIndex)=> prevIndex + 1);
             const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
 
@@ -63,7 +76,7 @@ export const CanvasProvider = ({ children }) => {
             ctx.arc(offsetX, offsetY, 20, 0, Math.PI * 2, false);
             ctx.stroke();
             ctx.closePath();
-
+            
             const node = {
                 centerX: offsetX,
                 centerY: offsetY,
@@ -73,6 +86,7 @@ export const CanvasProvider = ({ children }) => {
                 parent:null,
             };
             pushNode([...nodesOfGraph, node]);
+            writeText({text : `${node.id}`,x : node.centerX-10,y : node.centerY-10});
         }
         else {
             if (!isDrawing) {
@@ -144,7 +158,7 @@ export const CanvasProvider = ({ children }) => {
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, canvas.height);
         pushNode([]);
-        index = 0;
+        setIndex(1);
     }
 
     return (
@@ -161,6 +175,7 @@ export const CanvasProvider = ({ children }) => {
                 nodeDrawing,
                 nodesOfGraph,
                 pushNode,
+                setIndex,
             }}
         >
             {children}
