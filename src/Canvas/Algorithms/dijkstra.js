@@ -1,31 +1,31 @@
 // Dijkstra
-// to be edited
 // still raw
 
-function getChildren(grid, node) {
-    const childDirections = [[1, 0], [0, 1], [-1, 0], [0, -1]];
-    const childNodes = [];
-    const { row, col } = node;
-    childDirections.forEach(direction => {
-        const childRow = row + direction[0];
-        const childCol = col + direction[1];
+const createEdge = (nodeA, nodeB) => {
+    const xA = nodeA.centerX;
+    const yA = nodeA.centerY;
+    const xB = nodeB.centerX;
+    const yB = nodeB.centerY;
+    const edge = { xA, yA, xB, yB };
+    return edge;
+}
 
-        if (childRow >= 0 && childCol >= 0 && childCol < grid[0].length && childRow < grid.length) {
-            const childNode = grid[childRow][childCol];
-            if (!childNode.isVisited && !childNode.isWall) {
-                childNodes.push(childNode);
-                if (childNode.costFromSource > node.costFromSource + childNode.weight) {
-                    childNode.parent = node;
-                }
-                childNode.costFromSource = Math.min(childNode.costFromSource, node.costFromSource + childNode.weight);
+function getChildren(currentNode) {
+    const childNodes = [];
+    currentNode.children.forEach(childObject => {
+        const { node, weight } = childObject;
+        if (!node.isVisited) {
+            childNodes.push(node);
+            if (node.costFromSource > currentNode.costFromSource + weight) {
+                node.parent = currentNode;
             }
-            else if (childNode.isVisited) {
-                if (childNode.costFromSource > node.costFromSource + childNode.weight) {
-                    childNode.parent = node;
-                }
-                childNode.costFromSource = Math.min(childNode.costFromSource, node.costFromSource + childNode.weight);
-                // console.log("parent = ",row,col,childNode.costFromSource)
+            node.costFromSource = Math.min(node.costFromSource, currentNode.costFromSource + weight);
+        }
+        else if (node.isVisited) {
+            if (node.costFromSource > currentNode.costFromSource + weight) {
+                node.parent = currentNode;
             }
+            node.costFromSource = Math.min(node.costFromSource, currentNode.costFromSource + weight);
         }
     })
     return childNodes;
@@ -44,22 +44,28 @@ function extractMinIndex(dijkstraPQ) {
     return minNodeIndex;
 }
 
-export function dijkstra(grid, startNode, finishNode) {
+export function dijkstra(graph, startNode, finishNode) {
     const visitedNodesInOrder = [];
+    const visitedEdgesInOrder = [];
 
     let currentNode;
     let dijkstraPQ = [startNode];
+    startNode.costFromSource = 0;
     startNode.isVisited = true;
     while (dijkstraPQ.length) {
 
         const minIndex = extractMinIndex(dijkstraPQ);
         currentNode = dijkstraPQ[minIndex];
-        if (currentNode.isFinish) return visitedNodesInOrder;
+        if (currentNode === finishNode) {
+            visitedNodesInOrder.push(currentNode);
+            return visitedNodesInOrder; 
+        }
 
         visitedNodesInOrder.push(currentNode);
-        const childNodes = getChildren(grid, currentNode);
+        const childNodes = getChildren(currentNode);
         childNodes.forEach(node => {
             dijkstraPQ.push(node);
+            visitedEdgesInOrder.push(createEdge(currentNode,node));
             node.isVisited = true;
         });
         dijkstraPQ.splice(minIndex, 1);

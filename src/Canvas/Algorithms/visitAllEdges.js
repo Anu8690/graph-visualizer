@@ -31,6 +31,7 @@ export function visitAllEdges(graph) {
     graph.forEach((node) => {
         node.isVisited = false;
         node.parent = null;
+        node.costFromSource = Number.POSITIVE_INFINITY;
     });
 
     graph.forEach((node)=>{
@@ -49,7 +50,8 @@ export function visitAllEdges(graph) {
             while (bfsQueue.length) {
                 const currentNode = bfsQueue.shift();
                 currentNode.isVisited = true;
-                currentNode.children.forEach(child => {
+                currentNode.children.forEach(childObject => {
+                    const child = childObject.node;
                     if (!child.isVisited) {
                         const edge = createEdge(currentNode, child);
                         const { xA, yA, xB, yB } = edge;
@@ -72,5 +74,6 @@ export function visitAllEdges(graph) {
     graph.forEach((node) => {
         node.isVisited = false;
         node.parent = null;
+        node.costFromSource = Number.POSITIVE_INFINITY;
     });
 }

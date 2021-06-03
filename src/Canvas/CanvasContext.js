@@ -84,6 +84,7 @@ export const CanvasProvider = ({ children }) => {
                 children: [],
                 isVisited:false,
                 parent:null,
+                costFromSource:Number.POSITIVE_INFINITY,
             };
             pushNode([...nodesOfGraph, node]);
             writeText({text : `${node.id}`,x : node.centerX-10,y : node.centerY-10});
@@ -132,8 +133,9 @@ export const CanvasProvider = ({ children }) => {
                     contextRef.current.stroke();
 
                     if(!startNode.children.includes(end)){
-                        startNode.children.push(end);
-                        end.children.push(startNode);
+                        const weight = 0;
+                        startNode.children.push({node:end,weight});
+                        end.children.push({node:startNode,weight});
                     }
                 }
                 contextRef.current.closePath();

@@ -11,7 +11,8 @@ const createEdge = (nodeA, nodeB) => {
 function getChildren(node) {
     const childElements = [];
 
-    node.children.forEach((child)=>{
+    node.children.forEach((childObject)=>{
+        const child = childObject.node;
         if(!child.isVisited){
             childElements.push(child);
         }

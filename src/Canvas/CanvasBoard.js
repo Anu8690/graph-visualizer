@@ -31,29 +31,71 @@ function CanvasBoard(props) {
     const [endNode, setEndNode] = useState(0);
     useEffect(() => {
         props.settingGraph(nodesOfGraph);
-        if(!startNode) props.settingStartNode((nodesOfGraph.length?nodesOfGraph[0]:null));
-        if(!endNode) props.settingEndNode(nodesOfGraph.length ? nodesOfGraph[nodesOfGraph.length-1] : null);
+        if (!startNode) props.settingStartNode((nodesOfGraph.length ? nodesOfGraph[0] : null));
+        if (!endNode) props.settingEndNode(nodesOfGraph.length ? nodesOfGraph[nodesOfGraph.length - 1] : null);
         if (props.emptyGraphCall) {
             emptyTheGraph();
             props.toggleEmptyTheGraph();
         }
     }, [nodesOfGraph, props.emptyGraphCall]);
 
-    
-    const startNodeUpdate = (event)=>{
+
+    const startNodeUpdate = (event) => {
         const startIndex = event.target.value;
         setStartNode(startIndex);
         console.log("start updated");
-        if(startIndex != 0 && startIndex<=nodesOfGraph.length) props.settingStartNode(nodesOfGraph[startIndex-1]);
+        if (startIndex != 0 && startIndex <= nodesOfGraph.length) props.settingStartNode(nodesOfGraph[startIndex - 1]);
         else alert('Not a valid start node');
     }
     const endNodeUpdate = (event) => {
         const endIndex = event.target.value;
         setEndNode(endIndex);
         console.log("end updated");
-        if (endIndex != 0 && endIndex<=nodesOfGraph.length) props.settingEndNode(nodesOfGraph[endIndex - 1]);
+        if (endIndex != 0 && endIndex <= nodesOfGraph.length) props.settingEndNode(nodesOfGraph[endIndex - 1]);
         else alert('Not a valid start node');
     }
+
+///////////////////////////////////////// try doing without usingStates
+    const [weightNodeA,setWeightNodeA] = useState(0);
+    const [weightNodeB, setWeightNodeB] = useState(0);
+    const [weight,setWeight] = useState(0);
+    const weightNodeAUpdate = (event)=>{
+        const nodeIndex = event.target.value;
+        setWeightNodeA(nodeIndex);
+    }
+    const weightNodeBUpdate = (event) => {
+        const nodeIndex = event.target.value;
+        setWeightNodeB(nodeIndex);
+    }
+    const weightUpdate=(event)=>{
+        setWeight(event.target.value);
+    }
+    const addWeightToEdge = () => {
+        const startId = weightNodeA;
+        const endId = weightNodeB;
+        const weightFinal = weight;
+        if(startId > 0 && endId>0 && startId<=nodesOfGraph.length && endId<=nodesOfGraph.length){
+            const startNode = nodesOfGraph[startId - 1];
+            const endNode = nodesOfGraph[endId - 1];
+            for (let i = 0; i < startNode.children.length; i++) {
+                let { node, weight } = startNode.children[i];
+                if (node === endNode) {
+                    startNode.children[i].weight = weightFinal;
+                    for (let j = 0; j < endNode.children.length; j++) {
+                        let { node, weight } = endNode.children[j];
+                        if (node === startNode) {
+                            endNode.children[j].weight = weightFinal;
+                            console.log(endNode,startNode);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        alert('No such edge exists');
+    }
+/////////////////////////////////////////////////////////////////////////
+    
     return (
         <>
             {/* <section id="canvas-container"> */}
@@ -64,9 +106,19 @@ function CanvasBoard(props) {
                         <li> <a href="#" onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</a> </li>
                         <li>
                             <a>Start Node</a>
-                            <input id="startValue" placeholder={nodesOfGraph.length ? '1' : '0'} onChange = {startNodeUpdate}/>
+                            <input id="startValue" type = "number" placeholder={nodesOfGraph.length ? '1' : '0'} onChange={startNodeUpdate} />
                             <a>End Node</a>
-                            <input id="endValue" placeholder={nodesOfGraph.length} onChange = {endNodeUpdate}/>
+                            <input id="endValue" type="number" placeholder={nodesOfGraph.length} onChange={endNodeUpdate} />
+                        </li>
+                        <li>
+                            <a>Add Weight</a>
+                            <a>Start Node</a>
+                            <input onChange={weightNodeAUpdate} type="number"/>
+                            <a>End Node</a>
+                            <input onChange={weightNodeBUpdate} type="number"/>
+                            <a>Weight</a>
+                            <input id="edgeWeight" onChange={weightUpdate} type="number"/>
+                            <button onClick = {addWeightToEdge}>Submit</button>
                         </li>
                     </ul>
                 </div>

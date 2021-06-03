@@ -5,6 +5,7 @@ import CanvasBoard from './CanvasBoard';
 import { CanvasProvider } from './CanvasContext';
 import { bfs } from './Algorithms/bfs';
 import { dfs } from './Algorithms/dfs';
+import { dijkstra } from './Algorithms/dijkstra';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
 
 let nheight = 0;
@@ -26,10 +27,8 @@ class Canvas extends React.Component {
     
     navbarHeight = (height) => {
         console.log("height = ",height);
-        // const navbarHeight = height;
-        // this.setState({ navbarHeight });
         nheight = height;
-        console.log(nheight ," = nheight");
+        // console.log(nheight ," = nheight");
     }
     toggleEmptyTheGraph = ()=>{
         const emptyGraphCall = !this.state.emptyGraphCall;
@@ -45,11 +44,9 @@ class Canvas extends React.Component {
 
     settingStartNode = (startNode) => {
         this.setState({ startNode });
-        console.groupCollapsed("startnode updated success");
     }
     settingEndNode =  (endNode)=>{
         this.setState({endNode});
-        console.groupCollapsed("endnode updated success");
     }
     settingGraph = (graphOfNodes) => {
         this.setState({ graphOfNodes });
@@ -74,9 +71,9 @@ class Canvas extends React.Component {
             let visitedNodesInOrder1;
             let visitedEdgesInOrder1;
             switch (algo) {
-                // case 'Dijkstra':
-                //     visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-                //     break;
+                case 'Dijkstra':
+                    visitedNodesInOrder1 = dijkstra(graphOfNodes, startNode, finishNode);
+                    break;
                 case 'BFS':
                     {
                         const { visitedNodesInOrder, visitedEdgesInOrder } = bfs(graphOfNodes, startNode, finishNode);
@@ -95,6 +92,13 @@ class Canvas extends React.Component {
                     // should never get here
                     break;
             }
+
+            visitedNodesInOrder1.forEach(node=>{
+                console.log(node.id,node.costFromSource);
+            });
+            this.setState({ isRunning: false });
+
+            return;
 
             this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo);
         }
@@ -200,6 +204,7 @@ class Canvas extends React.Component {
                         toggleCanvas={() => this.toggleCanvas()}
                         bfs={() => this.visualize('BFS')}
                         dfs={() => this.visualize('DFS')}
+                        dijkstra={() => this.visualize('Dijkstra')}
                         clearGrid = {()=>this.redrawGraph()}
                         resetGrid = {()=>this.clearCanvas()}
                     ></Navbar>

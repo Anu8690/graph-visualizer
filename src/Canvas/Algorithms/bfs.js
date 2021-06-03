@@ -21,7 +21,8 @@ export function bfs(graph, startNode, finishNode) {
             // console.log(visitedEdgesInOrder);
             return { visitedNodesInOrder, visitedEdgesInOrder }
         };
-        currentNode.children.forEach(child => {
+        currentNode.children.forEach(childObject => {
+            const child = childObject.node;
             if(!child.isVisited){
                 child.isVisited = true;
                 child.parent = currentNode;
