@@ -157,10 +157,10 @@ export const CanvasProvider = ({ children }) => {
                 finishDrawing,
                 clearCanvas,
                 draw,
-                // addNode,
                 toggleNodeDrawing,
                 nodeDrawing,
                 nodesOfGraph,
+                pushNode,
             }}
         >
             {children}

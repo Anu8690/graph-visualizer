@@ -266,8 +266,9 @@ class PathfindingVisualizer extends React.Component {
 
 
     componentWillMount = () => {
+        // console.log("required", this.state.navbarHeight);
         const ROW_COUNT = 2 * Math.floor(Math.floor((document.documentElement.clientHeight - this.state.navbarHeight) / 25) / 2) - 3;
-        const COLUMN_COUNT = 2 * Math.floor(Math.floor(document.documentElement.clientWidth / 25) / 2) - 3;
+        const COLUMN_COUNT = 2 * Math.floor(Math.floor(document.documentElement.clientWidth / 25) / 2) - 1;
         const START_NODE_ROW = Math.floor(ROW_COUNT / 2);
         const FINISH_NODE_ROW = Math.floor(ROW_COUNT / 2);
         const START_NODE_COL = Math.floor(COLUMN_COUNT / 4);
@@ -277,6 +278,7 @@ class PathfindingVisualizer extends React.Component {
     componentDidMount = () => {
         const grid = this.getInitialGrid();
         this.setState({ grid });
+        console.log("required", this.state.navbarHeight);
         // console.log(grid);
     }
 

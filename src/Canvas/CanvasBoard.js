@@ -1,43 +1,50 @@
-import React, { useEffect,useContext,useLayoutEffect,useState } from "react";
+import React, { useEffect, useContext, useLayoutEffect, useState } from "react";
 import { CanvasContext } from "./CanvasContext";
-import rough from "roughjs/bundled/rough.esm";
 
-
-function CanvasBoard(props){
+function CanvasBoard(props) {
     const {
         canvasRef,
         prepareCanvas,
         startDrawing,
         finishDrawing,
         draw,
-        // addNode,
         toggleNodeDrawing,
         nodeDrawing,
         nodesOfGraph,
         clearCanvas,
+        pushNode,
     } = useContext(CanvasContext);
 
+    const emptyTheGraph = ()=>{
+        pushNode([]);
+    }
+
     useEffect(() => {
-        prepareCanvas(props.height,props.width);
+        prepareCanvas(props.height, props.width);
         clearCanvas();
     }, []);
-    useEffect(()=>{
-        // console.log(nodesOfGraph);
+    useEffect(() => {
         props.settingGraph(nodesOfGraph);
-    },[nodesOfGraph]);
+        if(props.emptyGraphCall){
+            emptyTheGraph();
+            props.toggleEmptyTheGraph();
+        }
+    }, [nodesOfGraph,props.emptyGraphCall]);
 
-    return(
-        <section id="canvas-container">
-            <canvas id='canvas'
-                onMouseDown={startDrawing}
-                onMouseUp={finishDrawing}
-                onMouseMove={draw}
-                // onClick = {addNode}
-                ref={canvasRef}
-            ></canvas>
-            <br></br>
-            <button onClick = {toggleNodeDrawing}>Add {nodeDrawing ? 'Edge':'Node'}</button>
-        </section>
+    return (
+        <>
+            {/* <section id="canvas-container"> */}
+                <canvas id='canvas'
+                    className = "centercanvas"
+                    onMouseDown={startDrawing}
+                    onMouseUp={finishDrawing}
+                    onMouseMove={draw}
+                    ref={canvasRef}
+                ></canvas>
+            <button onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</button>
+                <br></br>
+            {/* </section> */}
+        </>
     )
 }
 

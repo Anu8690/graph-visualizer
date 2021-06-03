@@ -1,26 +1,53 @@
 import React, { useContext } from 'react';
-import './Canvas.css'
+import './Canvas.css';
 import Navbar from '../Navbar';
-import CanvasBoard from './CanvasBoard'
-import { CanvasProvider } from './CanvasContext'
-import { ClearCanvasButton } from './clearCanvasButton'
-import { bfs } from './Algorithms/bfs'
-import { dfs } from './Algorithms/dfs'
+import CanvasBoard from './CanvasBoard';
+import { CanvasProvider } from './CanvasContext';
+import { bfs } from './Algorithms/bfs';
+import { dfs } from './Algorithms/dfs';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
+import Sidebar from './sideBar';
+
+let nheight = 0;
+let swidth=0;
 class Canvas extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             navbarHeight: 0,
+            sidebarWidth:0,
             height: 0,
             width: 0,
             graphOfNodes: [],
             isRunning: false,
+            emptyGraphCall:false,
         }
     }
     navbarHeight = (height) => {
-        const navbarHeight = height;
-        this.setState({ navbarHeight });
+        console.log("height = ",height);
+        // const navbarHeight = height;
+        // this.setState({ navbarHeight });
+        nheight = height;
+        console.log(nheight ," = nheight");
+    }
+    sidebarWidth = (width) => {
+        console.log("width = ",width);
+        swidth = width;
+        // const sidebarWidth = width;
+        // this.setState({ sidebarWidth});
+        // console.log(this.state.sidebarWidth);
+        console.log(swidth, " = swidth");
+    }
+    toggleEmptyTheGraph = ()=>{
+        const emptyGraphCall = !this.state.emptyGraphCall;
+        this.setState({ emptyGraphCall });
+    }
+    clearCanvas = ()=>{
+        this.setState({ emptyGraphCall :true});
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     settingGraph = (graphOfNodes) => {
@@ -28,36 +55,10 @@ class Canvas extends React.Component {
     }
 
     redrawGraph = () =>{
-        let canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext("2d");
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         const graphOfNodes = this.state.graphOfNodes;
-        let startNode = graphOfNodes[0];
-        const  visitedEdgesInOrder  = visitAllEdges(graphOfNodes, startNode);
-
-        ctx.strokeStyle = "#000000";
-        let { xA, yA } = visitedEdgesInOrder[0];
-        ctx.beginPath();
-        ctx.moveTo(xA, yA);
-        ctx.arc(xA, yA, 20, 0, Math.PI * 2, false);
-        ctx.stroke();
-        ctx.closePath();
-        
-        for (let i = 0; i < visitedEdgesInOrder.length; i++) {
-            const { xA, yA, xB, yB } = visitedEdgesInOrder[i];            
-            ctx.beginPath();
-            ctx.moveTo(xA, yA);
-            ctx.lineTo(xB, yB);
-            ctx.stroke();
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.arc(xB, yB, 20, 0, Math.PI * 2, false);
-            ctx.stroke();
-            ctx.closePath();
-        }
+        visitAllEdges(graphOfNodes);
     }
+
     visualize(algo) {
         if (!this.state.isRunning) {
             const graphOfNodes = this.state.graphOfNodes;
@@ -180,13 +181,15 @@ class Canvas extends React.Component {
         this.props.toggleCanvas();
     }
     componentWillMount = () => {
-        const height = document.documentElement.clientHeight - this.state.navbarHeight;
-        const width = document.documentElement.clientWidth - 100;
-        this.setState({ height, width });
+        // console.log("required",nheight,swidth);
+        // const height = document.documentElement.clientHeight - nheight;
+        // const width = document.documentElement.clientWidth - 100 - swidth;
+        // this.setState({ height, width });
     }
 
     render() {
-
+        const height = document.documentElement.clientHeight - nheight - 50;
+        const width = document.documentElement.clientWidth  - swidth - 30;
         return (
             <div>
                 <CanvasProvider>
@@ -196,14 +199,19 @@ class Canvas extends React.Component {
                         toggleCanvas={() => this.toggleCanvas()}
                         bfs={() => this.visualize('BFS')}
                         dfs={() => this.visualize('DFS')}
+                        clearGrid = {()=>this.redrawGraph()}
+                        resetGrid = {()=>this.clearCanvas()}
                     ></Navbar>
+                    <Sidebar
+                        sidebarWidth={this.sidebarWidth}
+                    ></Sidebar>
                     <CanvasBoard
-                        height={this.state.height}
-                        width={this.state.width}
+                        height={height}
+                        width={width}
                         settingGraph={this.settingGraph}
-
+                        emptyGraphCall={this.state.emptyGraphCall}
+                        toggleEmptyTheGraph={this.toggleEmptyTheGraph}
                     ></CanvasBoard>
-                    <ClearCanvasButton />
                 </CanvasProvider>
             </div>
         )
