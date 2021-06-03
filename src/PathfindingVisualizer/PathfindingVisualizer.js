@@ -28,24 +28,14 @@ class PathfindingVisualizer extends React.Component {
             startNodePressed: false,
             finishNodePressed: false,
             navbarHeight: 0,
-            weightWallToggle:false,
-            // isStartNode: false,
-            // isFinishNode: false,
-            // isWallNode: false, // xxxxxxx
-            // currRow: 0,
-            // currCol: 0,
-            // isDesktopView: true,
+            weightWallToggle:false,            
         };
-        // this.handleMouseLeave = this.handleMouseLeave.bind(this);
 
     }
 
     navbarHeight = (height) => {
-        // console.log("Arguement passed = ",height);
         const navbarHeight = height;
-        // console.log(navbarHeight);
         this.setState({ navbarHeight });
-        // return navbarHeight;
     }
 
     toggleIsRunning = () => {
@@ -458,6 +448,8 @@ class PathfindingVisualizer extends React.Component {
                     wallMazify={() => this.wallMazify()}
                     navbarHeight={this.navbarHeight}
                     weightWallToggle={()=>this.toggleWeightWallToggle()}
+                    toggleCanvas = {()=> this.props.toggleCanvas()}
+                    isCanvas={this.props.isCanvas}
                 ></Navbar>
                 <table className="center grid-container" >
                     <tbody className="grid">

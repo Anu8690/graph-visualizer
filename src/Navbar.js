@@ -10,6 +10,7 @@ class Navbar extends React.Component {
         this.state = {
             visualize:'',
             weightOrWall : false,
+            isCanvas: this.props.isCanvas,
         }
     }
     onVisualizeClick = () => {
@@ -28,6 +29,10 @@ class Navbar extends React.Component {
                 alert('Choose an algorithm for visualization!!');
         }
         // console.log(visualize);
+    }
+    toggleCanvas = ()=>{
+        this.props.toggleCanvas();
+        // console.log(this.state.isCanvas);
     }
     bfsClick = ()=>{
         this.setState({visualize : 'BFS'});
@@ -102,15 +107,7 @@ class Navbar extends React.Component {
                             <li id='startButtonClearBoard'><a href="#" onClick = {resetGrid}>Clear Board</a></li>
                             <li id='startButtonClearWalls'><a href="#" onClick = {clearWallsandWeights}>Clear Walls &amp; Weights</a></li>
                             <li id='startButtonClearPath'><a href="#" onClick={clearGrid}>Clear Path</a></li>
-                            {/* <li className="dropdown">
-                                <a id="adjustSpeed" className="dropdown-toggle" data-toggle="dropdown" href="#">Speed: Fast
-             <span className="caret"></span></a>
-                                <ul className="dropdown-menu">
-                                    <li id='adjustFast'><a href="#">Fast</a></li>
-                                    <li id='adjustAverage'><a href="#">Average</a></li>
-                                    <li id='adjustSlow'><a href="#">Slow</a></li>
-                                </ul>
-                            </li> */}
+                            <li id='startButtonAddObject'><a href="#" onClick={this.toggleCanvas}>Switch to {this.state.isCanvas ? 'Grid' : 'Canvas'}</a></li>
                         </ul>
                     </div>
                 </nav>

@@ -1,10 +1,6 @@
-// // BFS
+// BFS
 
 export function bfs (grid,startNode,finishNode) {
-
-    // console.log(grid);
-    // console.log(startNode, finishNode);
-
     const visitedNodesInOrder = [];
     let bfsQueue = [startNode];
     startNode.isVisited = true;
