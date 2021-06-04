@@ -9,8 +9,6 @@ import { dijkstra } from './Algorithms/dijkstra';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
 import { kruskalsMST } from './Algorithms/kruskals';
 import { primsMST } from './Algorithms/prims';
-let nheight = 0;
-let swidth = 0;
 class Canvas extends React.Component {
     constructor(props) {
         super(props);
@@ -24,10 +22,6 @@ class Canvas extends React.Component {
             startNode: null,
             endNode: null,
         }
-    }
-
-    navbarHeight = (height) => {
-        nheight = height;
     }
     toggleEmptyTheGraph = () => {
         const emptyGraphCall = !this.state.emptyGraphCall;
@@ -247,21 +241,13 @@ class Canvas extends React.Component {
         this.setState({ canvasOrGrid });
         this.props.toggleCanvas();
     }
-    componentWillMount = () => {
-        // console.log("required",nheight,swidth);
-        // const height = document.documentElement.clientHeight - nheight;
-        // const width = document.documentElement.clientWidth - 100 - swidth;
-        // this.setState({ height, width });
-    }
-
     render() {
-        const height = document.documentElement.clientHeight - nheight - 50;
-        const width = document.documentElement.clientWidth - swidth - 30;
+        const height = document.documentElement.clientHeight - 50;
+        const width = document.documentElement.clientWidth - 30;
         return (
             <div>
                 <CanvasProvider>
                     <Navbar
-                        navbarHeight={this.navbarHeight}
                         isCanvas={this.props.isCanvas}
                         toggleCanvas={() => this.toggleCanvas()}
                         bfs={() => this.visualize('BFS')}

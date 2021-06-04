@@ -41,9 +41,6 @@ class Navbar extends React.Component {
         this.setState({ weightOrWall });
         this.props.weightWallToggle();
     }
-    componentDidMount = () => {
-        this.props.navbarHeight(document.getElementById("navbarDiv").clientHeight);
-    }
     render() {
         const {
             clearGrid,
