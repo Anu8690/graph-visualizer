@@ -1,6 +1,6 @@
 // with data structure
 // working fine
-import DisjointSet from '../Data Structures/disjointSet';
+import DisjointSet from '../../Data Structures/disjointSet';
 let disjointSet = new DisjointSet((node)=>{
     return node.index;
 });

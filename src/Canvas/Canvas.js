@@ -7,7 +7,8 @@ import { bfs } from './Algorithms/bfs';
 import { dfs } from './Algorithms/dfs';
 import { dijkstra } from './Algorithms/dijkstra';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
-
+import { kruskalsMST } from './Algorithms/kruskals';
+import { primsMST } from './Algorithms/prims';
 let nheight = 0;
 let swidth = 0;
 class Canvas extends React.Component {
@@ -26,9 +27,7 @@ class Canvas extends React.Component {
     }
 
     navbarHeight = (height) => {
-        console.log("height = ", height);
         nheight = height;
-        // console.log(nheight ," = nheight");
     }
     toggleEmptyTheGraph = () => {
         const emptyGraphCall = !this.state.emptyGraphCall;
@@ -96,15 +95,15 @@ class Canvas extends React.Component {
                     // should never get here
                     break;
             }
-            visitedNodesInOrder1.forEach(node=>{
-                console.log(node.id,node.costFromSource);
+            visitedNodesInOrder1.forEach(node => {
+                console.log(node.id, node.costFromSource);
             });
-            this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo,finishNode);
+            this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo, finishNode);
         }
     }
 
 
-    animate = (visitedNodesInOrder, visitedEdgesInOrder, algo,finishNode) => {
+    animate = (visitedNodesInOrder, visitedEdgesInOrder, algo, finishNode) => {
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         ctx.fillStyle = "green";
@@ -139,12 +138,12 @@ class Canvas extends React.Component {
             }, i * 1000);
 
         }
-        if(visitedNodesInOrder[visitedNodesInOrder.length-1]===finishNode){
+        if (visitedNodesInOrder[visitedNodesInOrder.length - 1] === finishNode) {
             setTimeout(() => {
-                this.animateShortestPath(finishNode,visitedNodesInOrder);
-            }, 1000 * (visitedEdgesInOrder.length+1) + 100);
+                this.animateShortestPath(finishNode, visitedNodesInOrder);
+            }, 1000 * (visitedEdgesInOrder.length + 1) + 100);
         }
-        else{
+        else {
             setTimeout(() => {
                 ctx.fillStyle = "#ffffff";
                 ctx.strokeStyle = '#000000';
@@ -154,10 +153,10 @@ class Canvas extends React.Component {
         }
 
     }
-    animateShortestPath = (endNode,visitedNodesInOrder)=>{
+    animateShortestPath = (endNode, visitedNodesInOrder) => {
         let shortestPathNodes = [];
         let currentNode = endNode;
-        while(currentNode){
+        while (currentNode) {
             shortestPathNodes.push(currentNode);
             currentNode = currentNode.parent;
         }
@@ -165,24 +164,84 @@ class Canvas extends React.Component {
         let ctx = canvas.getContext('2d');
         ctx.fillStyle = "yellow";
 
-        for(let i = shortestPathNodes.length-1;i>=0;i--){
-            setTimeout(()=>{
+        for (let i = shortestPathNodes.length - 1; i >= 0; i--) {
+            setTimeout(() => {
                 const node = shortestPathNodes[i];
                 const { centerX, centerY } = node;
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
                 ctx.fill();
                 ctx.closePath();
-            },(shortestPathNodes.length-1-i)*500);
+            }, (shortestPathNodes.length - 1 - i) * 500);
         }
         setTimeout(() => {
             ctx.fillStyle = "#ffffff";
             ctx.strokeStyle = '#000000';
             this.setState({ isRunning: false });
-            shortestPathNodes=[];
-        }, 500*(shortestPathNodes.length) + 1000);
+            shortestPathNodes = [];
+        }, 500 * (shortestPathNodes.length) + 1000);
     }
 
+    visualizeMST = (algo) => {
+        if (!this.state.isRunning) {
+            const graphOfNodes = this.state.graphOfNodes;
+            if (!graphOfNodes.length) {
+                alert('Canvas is empty');
+                return;
+            }
+            this.setState({ isRunning: true });
+            this.redrawGraph();
+            let MSTedges = [];
+            switch (algo) {
+                case 'Kruskal':
+                {
+                    MSTedges = kruskalsMST(graphOfNodes);
+                    console.log(MSTedges);
+                    break;
+                }
+                case 'Prims':
+                {
+                    MSTedges = primsMST(graphOfNodes);
+                    break;
+                }
+                default:
+                    // do nothing
+                    console.log("here");
+                    break;
+            }
+            if(MSTedges.length) this.animateMST(MSTedges);
+            else{
+                this.setState({ isRunning: false });
+                console.log("ERROR");
+            }
+        }
+    }
+    animateMST = (MSTedges) => {
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 5;
+
+        for(let i=0;i<MSTedges.length;i++){
+            setTimeout(()=>{
+                const { nodeA, nodeB } = MSTedges[i];
+                const xA = nodeA.centerX;
+                const yA = nodeA.centerY;
+                const xB = nodeB.centerX;
+                const yB = nodeB.centerY;
+                ctx.beginPath();
+                ctx.moveTo(xA, yA);
+                ctx.lineTo(xB, yB);
+                ctx.stroke();
+                ctx.closePath();
+            },i*500);
+        }
+        setTimeout(()=>{
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            this.setState({isRunning:false});
+        },MSTedges.length*500+100);
+    }
     toggleCanvas = () => {
         const canvasOrGrid = !this.state.canvasOrGrid;
         this.setState({ canvasOrGrid });
@@ -210,6 +269,8 @@ class Canvas extends React.Component {
                         dijkstra={() => this.visualize('Dijkstra')}
                         clearGrid={() => this.redrawGraph()}
                         resetGrid={() => this.clearCanvas()}
+                        kruskalMST={() => this.visualizeMST('Kruskal')}
+                        primMST={() => this.visualizeMST('Prims')}
                     ></Navbar>
                     <CanvasBoard
                         height={height}

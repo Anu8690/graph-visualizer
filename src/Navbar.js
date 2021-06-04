@@ -56,6 +56,8 @@ class Navbar extends React.Component {
             weightMazify,
             wallMazify,
             clearWallsandWeights,
+            kruskalMST,
+            primMST,
         } = this.props;
 
         let mazeOptions = <li className="dropdown">
@@ -74,7 +76,14 @@ class Navbar extends React.Component {
         let weightAndWallOption = <li id='startButtonClearWalls'><a href="#" onClick={clearWallsandWeights}>Clear Walls &amp; Weights</a></li>;
         let addWeightOption = <li id='startButtonAddObject'><a href="#" onClick={this.onWeightWallToggleClick}>Add {this.state.weightOrWall ? 'Wall' : 'Weight'}</a></li>;
         if(this.state.isCanvas){
-            mazeOptions = <li></li>;
+            mazeOptions = <li className="dropdown">
+                <a className="dropdown-toggle" data-toggle="dropdown" href="#">Minimum Spanning Tree
+             <span className="caret"></span></a>
+                <ul className="dropdown-menu">
+                    <li id='startButtonCreateMazeFour'><a href="#" onClick={kruskalMST}>Kruskal's Algorithm</a></li>
+                    <li id='startButtonCreateMazeFour'><a href="#" onClick={primMST}>Prims's Algorithm</a></li>
+                </ul>
+            </li>;
             weightAndWallOption = <li></li>;
             addWeightOption = <li></li>;
         }
