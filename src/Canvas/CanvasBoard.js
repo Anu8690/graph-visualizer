@@ -70,6 +70,20 @@ function CanvasBoard(props) {
     const weightUpdate=(event)=>{
         setWeight(event.target.value);
     }
+    const writeText = (info, style = {}) => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const { text, x, y } = info;
+        const { fontSize = 20, fontFamily = 'Arial', color = 'black', textAlign = 'left', textBaseline = 'top' } = style;
+
+        ctx.beginPath();
+        ctx.font = fontSize + 'px ' + fontFamily;
+        ctx.textAlign = textAlign;
+        ctx.textBaseline = textBaseline;
+        ctx.fillStyle = color;
+        ctx.fillText(text, x, y);
+        ctx.stroke();
+    }
     const addWeightToEdge = () => {
         const startId = weightNodeA;
         const endId = weightNodeB;
@@ -85,7 +99,10 @@ function CanvasBoard(props) {
                         let { node, weight } = endNode.children[j];
                         if (node === startNode) {
                             endNode.children[j].weight = weightFinal;
-                            console.log(endNode,startNode);
+                            const x = (startNode.centerX + endNode.centerX)/2;
+                            const y = (startNode.centerY + endNode.centerY)/2;
+                            writeText({text:weightFinal,x,y});
+                            // console.log(endNode,startNode);
                             return;
                         }
                     }

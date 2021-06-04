@@ -1,5 +1,10 @@
 // BFS
 const createEdge = (nodeA,nodeB)=>{
+    if(nodeA === null){
+        const xB = nodeB.centerX;
+        const yB = nodeB.centerY;
+        return {xB,yB,xB,yB};
+    }
     const xA = nodeA.centerX;
     const yA = nodeA.centerY;
     const xB = nodeB.centerX;
@@ -17,6 +22,7 @@ export function bfs(graph, startNode, finishNode) {
     while (bfsQueue.length) {
         const currentNode = bfsQueue.shift();
         visitedNodesInOrder.push(currentNode);
+        visitedEdgesInOrder.push(createEdge(currentNode.parent, currentNode));
         if (currentNode === finishNode) {
             // console.log(visitedEdgesInOrder);
             return { visitedNodesInOrder, visitedEdgesInOrder }
@@ -27,7 +33,6 @@ export function bfs(graph, startNode, finishNode) {
                 child.isVisited = true;
                 child.parent = currentNode;
                 // console.log(child);
-                visitedEdgesInOrder.push(createEdge(currentNode,child));
                 bfsQueue.push(child);
             }
         });

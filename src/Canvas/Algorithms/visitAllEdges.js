@@ -3,7 +3,7 @@ const createEdge = (nodeA, nodeB) => {
     const yA = nodeA.centerY;
     const xB = nodeB.centerX;
     const yB = nodeB.centerY;
-    const edge = { xA, yA, xB, yB};
+    const edge = { xA, yA, xB, yB };
     return edge;
 }
 
@@ -34,10 +34,10 @@ export function visitAllEdges(graph) {
         node.costFromSource = Number.POSITIVE_INFINITY;
     });
 
-    graph.forEach((node)=>{
+    graph.forEach((node) => {
         writeText({ text: `${node.id}`, x: node.centerX - 35, y: node.centerY - 35 });
-        if(!node.isVisited){
-            
+        if (!node.isVisited) {
+
             ctx.strokeStyle = "#000000";
             let { centerX, centerY } = node;
             ctx.beginPath();
@@ -55,6 +55,10 @@ export function visitAllEdges(graph) {
                     if (!child.isVisited) {
                         const edge = createEdge(currentNode, child);
                         const { xA, yA, xB, yB } = edge;
+                        const x = (xA + xB) / 2;
+                        const y = (yA + yB) / 2;
+                        const weight = childObject.weight;
+                        writeText({text:weight,x,y});
                         ctx.beginPath();
                         ctx.moveTo(xA, yA);
                         ctx.lineTo(xB, yB);
@@ -70,7 +74,7 @@ export function visitAllEdges(graph) {
             }
         }
     });
-    
+
     graph.forEach((node) => {
         node.isVisited = false;
         node.parent = null;

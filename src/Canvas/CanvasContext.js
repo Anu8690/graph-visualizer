@@ -121,16 +121,19 @@ export const CanvasProvider = ({ children }) => {
                     // dont draw the edge
                     // dont push it into edges
                     console.log("end node is null");
+                    contextRef.current.closePath();
                 }
                 else if (end.id === startNode.id) {
                     // dont draw the edge
                     // dont push it into edges
                     console.log("end node = start node");
+                    contextRef.current.closePath();
                 }
                 else {
                     contextRef.current.moveTo(startNode.centerX, startNode.centerY);
                     contextRef.current.lineTo(end.centerX, end.centerY);
                     contextRef.current.stroke();
+                    contextRef.current.closePath();
 
                     if(!startNode.children.includes(end)){
                         const weight = 0;
@@ -138,7 +141,7 @@ export const CanvasProvider = ({ children }) => {
                         end.children.push({node:startNode,weight});
                     }
                 }
-                contextRef.current.closePath();
+                // contextRef.current.closePath();
                 currentCoordinates = null;
                 setStartNode(null);
             }

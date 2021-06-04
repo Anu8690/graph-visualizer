@@ -10,7 +10,7 @@ const createEdge = (nodeA, nodeB) => {
     return edge;
 }
 
-function getChildren(currentNode) {
+function getChildren(currentNode,visitedEdgesInOrder) {
     const childNodes = [];
     currentNode.children.forEach(childObject => {
         const { node, weight } = childObject;
@@ -18,12 +18,14 @@ function getChildren(currentNode) {
             childNodes.push(node);
             if (node.costFromSource > currentNode.costFromSource + weight) {
                 node.parent = currentNode;
+                visitedEdgesInOrder.push(createEdge(currentNode,node));
             }
             node.costFromSource = Math.min(node.costFromSource, currentNode.costFromSource + weight);
         }
         else if (node.isVisited) {
             if (node.costFromSource > currentNode.costFromSource + weight) {
                 node.parent = currentNode;
+                visitedEdgesInOrder.push(createEdge(currentNode, node));
             }
             node.costFromSource = Math.min(node.costFromSource, currentNode.costFromSource + weight);
         }
@@ -58,18 +60,18 @@ export function dijkstra(graph, startNode, finishNode) {
         currentNode = dijkstraPQ[minIndex];
         if (currentNode === finishNode) {
             visitedNodesInOrder.push(currentNode);
-            return visitedNodesInOrder; 
+            return { visitedNodesInOrder, visitedEdgesInOrder };
         }
 
         visitedNodesInOrder.push(currentNode);
-        const childNodes = getChildren(currentNode);
+        const childNodes = getChildren(currentNode,visitedEdgesInOrder);
         childNodes.forEach(node => {
             dijkstraPQ.push(node);
-            visitedEdgesInOrder.push(createEdge(currentNode,node));
+            // visitedEdgesInOrder.push(createEdge(currentNode,node));
             node.isVisited = true;
         });
         dijkstraPQ.splice(minIndex, 1);
     }
-    return visitedNodesInOrder;
+    return {visitedNodesInOrder,visitedEdgesInOrder};
 }
 

@@ -9,7 +9,7 @@ import { dijkstra } from './Algorithms/dijkstra';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
 
 let nheight = 0;
-let swidth=0;
+let swidth = 0;
 class Canvas extends React.Component {
     constructor(props) {
         super(props);
@@ -19,23 +19,23 @@ class Canvas extends React.Component {
             width: 0,
             graphOfNodes: [],
             isRunning: false,
-            emptyGraphCall:false,
+            emptyGraphCall: false,
             startNode: null,
-            endNode:null,
+            endNode: null,
         }
     }
-    
+
     navbarHeight = (height) => {
-        console.log("height = ",height);
+        console.log("height = ", height);
         nheight = height;
         // console.log(nheight ," = nheight");
     }
-    toggleEmptyTheGraph = ()=>{
+    toggleEmptyTheGraph = () => {
         const emptyGraphCall = !this.state.emptyGraphCall;
         this.setState({ emptyGraphCall });
     }
-    clearCanvas = ()=>{
-        this.setState({ emptyGraphCall :true});
+    clearCanvas = () => {
+        this.setState({ emptyGraphCall: true });
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext("2d");
         context.fillStyle = "white";
@@ -45,14 +45,14 @@ class Canvas extends React.Component {
     settingStartNode = (startNode) => {
         this.setState({ startNode });
     }
-    settingEndNode =  (endNode)=>{
-        this.setState({endNode});
+    settingEndNode = (endNode) => {
+        this.setState({ endNode });
     }
     settingGraph = (graphOfNodes) => {
         this.setState({ graphOfNodes });
     }
 
-    redrawGraph = () =>{
+    redrawGraph = () => {
         const graphOfNodes = this.state.graphOfNodes;
         visitAllEdges(graphOfNodes);
     }
@@ -72,8 +72,14 @@ class Canvas extends React.Component {
             let visitedEdgesInOrder1;
             switch (algo) {
                 case 'Dijkstra':
-                    visitedNodesInOrder1 = dijkstra(graphOfNodes, startNode, finishNode);
-                    break;
+                    {
+                        // currently dijstra is taking cost from source as string
+                        // have to fix this bug
+                        const { visitedNodesInOrder, visitedEdgesInOrder } = dijkstra(graphOfNodes, startNode, finishNode);
+                        visitedNodesInOrder1 = visitedNodesInOrder;
+                        visitedEdgesInOrder1 = visitedEdgesInOrder;
+                        break;
+                    }
                 case 'BFS':
                     {
                         const { visitedNodesInOrder, visitedEdgesInOrder } = bfs(graphOfNodes, startNode, finishNode);
@@ -93,12 +99,12 @@ class Canvas extends React.Component {
                     break;
             }
 
-            visitedNodesInOrder1.forEach(node=>{
-                console.log(node.id,node.costFromSource);
-            });
-            this.setState({ isRunning: false });
+            // visitedNodesInOrder1.forEach(node=>{
+            //     console.log(node.id,node.costFromSource);
+            // });
+            // this.setState({ isRunning: false });
 
-            return;
+            // return;
 
             this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo);
         }
@@ -111,72 +117,40 @@ class Canvas extends React.Component {
         ctx.fillStyle = "green";
         ctx.strokeStyle = '#ff0000';
         ctx.lineWidth = 1;
-        
-        if (algo === 'BFS') {
-            for (let i = 0; i < visitedNodesInOrder.length; i++) {
+
+        let { centerX, centerY } = visitedNodesInOrder[0];
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+        ctx.fill();
+        ctx.closePath();
+
+        for (let i = 0; i < visitedEdgesInOrder.length; i++) {
+            const { xA, yA, xB, yB } = visitedEdgesInOrder[i];
+
+            setTimeout(() => {
                 setTimeout(() => {
-                    const node = visitedNodesInOrder[i];
-                    const { centerX, centerY } = node;
                     ctx.beginPath();
-                    ctx.moveTo(centerX, centerY);
-                    ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+                    ctx.moveTo(xA, yA);
+                    ctx.lineTo(xB, yB);
+                    ctx.stroke();
+                    ctx.closePath();
+                }, 500);
+
+                setTimeout(() => {
+                    ctx.beginPath();
+                    ctx.arc(xB, yB, 20, 0, Math.PI * 2, false);
                     ctx.fill();
                     ctx.closePath();
-
-                    for (let j = 0; j < node.children.length; j++) {
-                        setTimeout(() => {
-                            const xB = node.children[j].centerX;
-                            const yB = node.children[j].centerY;
-                            ctx.beginPath();
-                            ctx.moveTo(centerX, centerY);
-                            visitedEdgesInOrder.shift();
-                            ctx.lineTo(xB, yB);
-                            ctx.stroke();
-                            ctx.closePath();
-                        }, i + j * (500 / node.children.length));
-                    }
-                }, i * 500);
-            }
-            setTimeout(() => {
-                ctx.fillStyle = "#ffffff";
-                ctx.strokeStyle = '#000000';
-            }, 500 * visitedNodesInOrder.length);
-        }
-        else if (algo === 'DFS') {
-            let { centerX, centerY } = visitedNodesInOrder[0];
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
-            ctx.fill();
-            ctx.closePath();
-
-            for (let i = 0; i < visitedEdgesInOrder.length; i++) {
-                const { xA, yA, xB, yB } = visitedEdgesInOrder[i];
-
-                setTimeout(() => {
-                    setTimeout(() => {
-                        ctx.beginPath();
-                        ctx.moveTo(xA, yA);
-                        ctx.lineTo(xB, yB);
-                        ctx.stroke();
-                        ctx.closePath();
-                    }, 500);
-
-                    setTimeout(() => {
-                        ctx.beginPath();
-                        ctx.arc(xB, yB, 20, 0, Math.PI * 2, false);
-                        ctx.fill();
-                        ctx.closePath();
-                    }, 1000);
-                }, i * 1000);
-
-            }
-            setTimeout(()=>{
-                ctx.fillStyle = "#ffffff";
-                ctx.strokeStyle = '#000000';
-            },1000*visitedNodesInOrder.length);
+                }, 1000);
+            }, i * 1000);
 
         }
+        setTimeout(() => {
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = '#000000';
+        }, 1000 * visitedNodesInOrder.length + 1000);
+
         this.setState({ isRunning: false });
     }
 
@@ -194,7 +168,7 @@ class Canvas extends React.Component {
 
     render() {
         const height = document.documentElement.clientHeight - nheight - 50;
-        const width = document.documentElement.clientWidth  - swidth - 30;
+        const width = document.documentElement.clientWidth - swidth - 30;
         return (
             <div>
                 <CanvasProvider>
@@ -205,8 +179,8 @@ class Canvas extends React.Component {
                         bfs={() => this.visualize('BFS')}
                         dfs={() => this.visualize('DFS')}
                         dijkstra={() => this.visualize('Dijkstra')}
-                        clearGrid = {()=>this.redrawGraph()}
-                        resetGrid = {()=>this.clearCanvas()}
+                        clearGrid={() => this.redrawGraph()}
+                        resetGrid={() => this.clearCanvas()}
                     ></Navbar>
                     <CanvasBoard
                         height={height}
