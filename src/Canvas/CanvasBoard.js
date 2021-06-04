@@ -135,7 +135,7 @@ function CanvasBoard(props) {
                             <a>End Node</a>
                             <input id="endValue" type="number" placeholder={nodesOfGraph.length} onChange={endNodeUpdate} />
                         </li>
-                        <li>
+                        {/* <li>
                             <a>Add Weight</a>
                             <a>Start Node</a>
                             <input onChange={weightNodeAUpdate} type="number" value ={weightNodeA}/>
@@ -144,7 +144,7 @@ function CanvasBoard(props) {
                             <a>Weight</a>
                             <input id="edgeWeight" onChange={weightUpdate} type="number" value = {weight}/>
                             <button onClick = {addWeightToEdge}>Submit</button>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
             </div>
