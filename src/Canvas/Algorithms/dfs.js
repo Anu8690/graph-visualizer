@@ -11,9 +11,9 @@ const createEdge = (nodeA, nodeB) => {
 function getChildren(node) {
     const childElements = [];
 
-    node.children.forEach((childObject)=>{
+    node.children.forEach((childObject) => {
         const child = childObject.node;
-        if(!child.isVisited){
+        if (!child.isVisited) {
             childElements.push(child);
         }
     });
@@ -28,11 +28,13 @@ export function dfs(graph, startNode, finishNode) {
     let currentNode = startNode;
     let dfsStack = [currentNode];
     while (dfsStack.length) {
-        if (currentNode === finishNode) return { visitedNodesInOrder, visitedEdgesInOrder };
+        if (currentNode === finishNode) { 
+            return { visitedNodesInOrder, visitedEdgesInOrder }; 
+        }
         const childElements = getChildren(currentNode);
         if (childElements.length) {
             childElements[0].parent = currentNode;
-            visitedEdgesInOrder.push(createEdge(currentNode,childElements[0]));
+            visitedEdgesInOrder.push(createEdge(currentNode, childElements[0]));
             currentNode = childElements[0];
             currentNode.isVisited = true;
             visitedNodesInOrder.push(currentNode);
@@ -43,5 +45,5 @@ export function dfs(graph, startNode, finishNode) {
             currentNode = dfsStack[dfsStack.length - 1];
         }
     }
-    return {visitedNodesInOrder,visitedEdgesInOrder};
+    return { visitedNodesInOrder, visitedEdgesInOrder };
 }

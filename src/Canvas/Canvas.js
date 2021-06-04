@@ -73,8 +73,6 @@ class Canvas extends React.Component {
             switch (algo) {
                 case 'Dijkstra':
                     {
-                        // currently dijstra is taking cost from source as string
-                        // have to fix this bug
                         const { visitedNodesInOrder, visitedEdgesInOrder } = dijkstra(graphOfNodes, startNode, finishNode);
                         visitedNodesInOrder1 = visitedNodesInOrder;
                         visitedEdgesInOrder1 = visitedEdgesInOrder;
@@ -98,20 +96,15 @@ class Canvas extends React.Component {
                     // should never get here
                     break;
             }
-
-            // visitedNodesInOrder1.forEach(node=>{
-            //     console.log(node.id,node.costFromSource);
-            // });
-            // this.setState({ isRunning: false });
-
-            // return;
-
-            this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo);
+            visitedNodesInOrder1.forEach(node=>{
+                console.log(node.id,node.costFromSource);
+            });
+            this.animate(visitedNodesInOrder1, visitedEdgesInOrder1, algo,finishNode);
         }
     }
 
 
-    animate = (visitedNodesInOrder, visitedEdgesInOrder, algo) => {
+    animate = (visitedNodesInOrder, visitedEdgesInOrder, algo,finishNode) => {
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         ctx.fillStyle = "green";
@@ -146,12 +139,48 @@ class Canvas extends React.Component {
             }, i * 1000);
 
         }
+        if(visitedNodesInOrder[visitedNodesInOrder.length-1]===finishNode){
+            setTimeout(() => {
+                this.animateShortestPath(finishNode,visitedNodesInOrder);
+            }, 1000 * (visitedEdgesInOrder.length+1) + 100);
+        }
+        else{
+            setTimeout(() => {
+                ctx.fillStyle = "#ffffff";
+                ctx.strokeStyle = '#000000';
+                this.setState({ isRunning: false });
+                alert('node not reachable');
+            }, 1000 * visitedNodesInOrder.length + 100);
+        }
+
+    }
+    animateShortestPath = (endNode,visitedNodesInOrder)=>{
+        let shortestPathNodes = [];
+        let currentNode = endNode;
+        while(currentNode){
+            shortestPathNodes.push(currentNode);
+            currentNode = currentNode.parent;
+        }
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        ctx.fillStyle = "yellow";
+
+        for(let i = shortestPathNodes.length-1;i>=0;i--){
+            setTimeout(()=>{
+                const node = shortestPathNodes[i];
+                const { centerX, centerY } = node;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 20, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.closePath();
+            },(shortestPathNodes.length-1-i)*500);
+        }
         setTimeout(() => {
             ctx.fillStyle = "#ffffff";
             ctx.strokeStyle = '#000000';
-        }, 1000 * visitedNodesInOrder.length + 1000);
-
-        this.setState({ isRunning: false });
+            this.setState({ isRunning: false });
+            shortestPathNodes=[];
+        }, 500*(shortestPathNodes.length) + 1000);
     }
 
     toggleCanvas = () => {
@@ -190,6 +219,7 @@ class Canvas extends React.Component {
                         settingEndNode={this.settingEndNode}
                         emptyGraphCall={this.state.emptyGraphCall}
                         toggleEmptyTheGraph={this.toggleEmptyTheGraph}
+                        isRunning={this.state.isRunning}
                     ></CanvasBoard>
                 </CanvasProvider>
             </div>

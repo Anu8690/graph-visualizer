@@ -107,6 +107,7 @@ export const CanvasProvider = ({ children }) => {
         }
     };
 
+    const [currentEdgeWeight,setCurrentEdgeWeight] = useState(0);
     const finishDrawing = () => {
         if (!nodeDrawing) {
 
@@ -134,14 +135,23 @@ export const CanvasProvider = ({ children }) => {
                     contextRef.current.lineTo(end.centerX, end.centerY);
                     contextRef.current.stroke();
                     contextRef.current.closePath();
-
-                    if(!startNode.children.includes(end)){
-                        const weight = 0;
-                        startNode.children.push({node:end,weight});
-                        end.children.push({node:startNode,weight});
+                    
+                    let c =false;
+                    for(let i=0;i<startNode.children.length;i++){
+                        if(startNode.children[i].node === end){
+                            c = true;
+                            break;
+                        }
+                    }
+                    if(!c){
+                        const weight = currentEdgeWeight;
+                        const x = (startNode.centerX + end.centerX) / 2;
+                        const y = (startNode.centerY + end.centerY) / 2;
+                        startNode.children.push({ node: end, weight });
+                        end.children.push({ node: startNode, weight });
+                        writeText({ text: (weight?weight:''), x, y });
                     }
                 }
-                // contextRef.current.closePath();
                 currentCoordinates = null;
                 setStartNode(null);
             }
@@ -181,6 +191,7 @@ export const CanvasProvider = ({ children }) => {
                 nodesOfGraph,
                 pushNode,
                 setIndex,
+                setCurrentEdgeWeight,
             }}
         >
             {children}

@@ -57,7 +57,7 @@ export function visitAllEdges(graph) {
                         const { xA, yA, xB, yB } = edge;
                         const x = (xA + xB) / 2;
                         const y = (yA + yB) / 2;
-                        const weight = childObject.weight;
+                        const weight = (childObject.weight ? childObject.weight:'');
                         writeText({text:weight,x,y});
                         ctx.beginPath();
                         ctx.moveTo(xA, yA);

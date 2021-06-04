@@ -14,6 +14,7 @@ function CanvasBoard(props) {
         clearCanvas,
         pushNode,
         setIndex,
+        setCurrentEdgeWeight,
     } = useContext(CanvasContext);
 
     const emptyTheGraph = () => {
@@ -40,17 +41,16 @@ function CanvasBoard(props) {
     }, [nodesOfGraph, props.emptyGraphCall]);
 
 
+
     const startNodeUpdate = (event) => {
         const startIndex = event.target.value;
         setStartNode(startIndex);
-        console.log("start updated");
         if (startIndex != 0 && startIndex <= nodesOfGraph.length) props.settingStartNode(nodesOfGraph[startIndex - 1]);
         else alert('Not a valid start node');
     }
     const endNodeUpdate = (event) => {
         const endIndex = event.target.value;
         setEndNode(endIndex);
-        console.log("end updated");
         if (endIndex != 0 && endIndex <= nodesOfGraph.length) props.settingEndNode(nodesOfGraph[endIndex - 1]);
         else alert('Not a valid start node');
     }
@@ -68,7 +68,9 @@ function CanvasBoard(props) {
         setWeightNodeB(nodeIndex);
     }
     const weightUpdate=(event)=>{
-        setWeight(event.target.value);
+        const weight=parseInt(event.target.value);
+        setWeight(weight);
+        setCurrentEdgeWeight(weight);
     }
     const writeText = (info, style = {}) => {
         const canvas = canvasRef.current;
@@ -92,7 +94,7 @@ function CanvasBoard(props) {
             const startNode = nodesOfGraph[startId - 1];
             const endNode = nodesOfGraph[endId - 1];
             for (let i = 0; i < startNode.children.length; i++) {
-                let { node, weight } = startNode.children[i];
+                let { node } = startNode.children[i];
                 if (node === endNode) {
                     startNode.children[i].weight = weightFinal;
                     for (let j = 0; j < endNode.children.length; j++) {
@@ -102,7 +104,6 @@ function CanvasBoard(props) {
                             const x = (startNode.centerX + endNode.centerX)/2;
                             const y = (startNode.centerY + endNode.centerY)/2;
                             writeText({text:weightFinal,x,y});
-                            // console.log(endNode,startNode);
                             return;
                         }
                     }
@@ -112,7 +113,11 @@ function CanvasBoard(props) {
         alert('No such edge exists');
     }
 /////////////////////////////////////////////////////////////////////////
-    
+    let edgeWeightInput = <div><a>Current edge weight</a>
+        <input id="edgeWeight" onChange={weightUpdate} type="number" value={weight} /></div>;
+    if(nodeDrawing){
+        edgeWeightInput = <div></div>
+    }
     return (
         <>
             {/* <section id="canvas-container"> */}
@@ -120,7 +125,10 @@ function CanvasBoard(props) {
                 <div id="sidebar-wrapper">
                     <ul className="sidebar-nav">
                         <li className="sidebar-brand"> <a href="#"> Control Panel </a> </li>
-                        <li> <a href="#" onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</a> </li>
+                        <li> 
+                            <a href="#" onClick={toggleNodeDrawing}>Add {nodeDrawing ? 'Edge' : 'Node'}</a> 
+                            {edgeWeightInput}
+                        </li>
                         <li>
                             <a>Start Node</a>
                             <input id="startValue" type = "number" placeholder={nodesOfGraph.length ? '1' : '0'} onChange={startNodeUpdate} />
@@ -130,11 +138,11 @@ function CanvasBoard(props) {
                         <li>
                             <a>Add Weight</a>
                             <a>Start Node</a>
-                            <input onChange={weightNodeAUpdate} type="number"/>
+                            <input onChange={weightNodeAUpdate} type="number" value ={weightNodeA}/>
                             <a>End Node</a>
-                            <input onChange={weightNodeBUpdate} type="number"/>
+                            <input onChange={weightNodeBUpdate} type="number" value = {weightNodeB}/>
                             <a>Weight</a>
-                            <input id="edgeWeight" onChange={weightUpdate} type="number"/>
+                            <input id="edgeWeight" onChange={weightUpdate} type="number" value = {weight}/>
                             <button onClick = {addWeightToEdge}>Submit</button>
                         </li>
                     </ul>
@@ -142,8 +150,8 @@ function CanvasBoard(props) {
             </div>
             <canvas id='canvas'
                 className="centercanvas"
-                onMouseDown={startDrawing}
-                onMouseUp={finishDrawing}
+                onMouseDown={props.isRunning?()=>{}:startDrawing}
+                onMouseUp={props.isRunning ? () => { } :finishDrawing}
                 onMouseMove={draw}
                 ref={canvasRef}
             ></canvas>

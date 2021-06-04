@@ -67,7 +67,6 @@ export function dijkstra(graph, startNode, finishNode) {
         const childNodes = getChildren(currentNode,visitedEdgesInOrder);
         childNodes.forEach(node => {
             dijkstraPQ.push(node);
-            // visitedEdgesInOrder.push(createEdge(currentNode,node));
             node.isVisited = true;
         });
         dijkstraPQ.splice(minIndex, 1);
