@@ -131,10 +131,7 @@ export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
             }
             vWallSet.splice(random2, 1);
         }
-        // console.log(hWallSet.length,vWallSet.length);
-        // console.log(hWallSet,vWallSet);
     }
 
-    // rootNodeIndex = [];
     return grid;
 }

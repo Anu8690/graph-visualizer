@@ -41,7 +41,6 @@ function getChildren(node, grid) {
     const childElements = [];
     const hChildDirections = [[2, 0], [-2, 0]];
     const vChildDirections = [[0, 2], [0, -2]];
-    // const childDirections = [[2,0],[0,2],[-2,0],[0,-2]];
 
     const hChildElements = [];
     hChildDirections.forEach(direction => {
@@ -50,7 +49,6 @@ function getChildren(node, grid) {
         if (childRow >= 0 && childCol >= 0 && childRow < grid.length && childCol < grid[0].length) {
             const child = grid[childRow][childCol];
             if (!child.isVisited) {
-                // child.isVisited = true;
                 hChildElements.push(child);
             }
         }
@@ -64,7 +62,6 @@ function getChildren(node, grid) {
         if (childRow >= 0 && childCol >= 0 && childRow < grid.length && childCol < grid[0].length) {
             const child = grid[childRow][childCol];
             if (!child.isVisited) {
-                // child.isVisited = true;
                 vChildElements.push(child);
             }
         }
@@ -85,13 +82,10 @@ function removeWall(nodeA, nodeB, grid) {
 
     grid[r][c].isWall = false;
     return;
-    // return grid[r][c];
-
 }
 
 export function verticalSkewMaze(rowNum, colNum, startNode, finishNode) {
     const grid = initialGrid(rowNum, colNum, startNode, finishNode);
-    // console.log(grid);
 
     let currentNode = grid[1][1];
     let dfsStack = [currentNode];
@@ -123,7 +117,6 @@ export function verticalSkewMaze(rowNum, colNum, startNode, finishNode) {
             }
             else {
                 const random = Math.floor(Math.random() * childElements[0].length);
-                // console.log(currentNode, childElements[random], removeWall(currentNode, childElements[random]));
                 removeWall(currentNode, childElements[0][random], grid);
                 currentNode = childElements[0][random];
                 currentNode.isVisited = true;
@@ -139,7 +132,6 @@ export function verticalSkewMaze(rowNum, colNum, startNode, finishNode) {
             node.isVisited = false;
         });
     });
-    // console.log(grid);
     return grid;
 }
 

@@ -8,10 +8,11 @@ import { maze } from './Mazes/maze'
 import { weightMaze } from './Mazes/weightMaze'
 import { wallMaze } from './Mazes/wallMaze'
 import Navbar from '../Navbar';
-import {horizontalSkewMaze} from './Mazes/hSkewMaze';
+import { horizontalSkewMaze } from './Mazes/hSkewMaze';
 import { verticalSkewMaze } from './Mazes/vSkewMaze';
 import { kruskalMaze } from './Mazes/kruskalsMaze1';
-import {primMaze} from './Mazes/primsMaze';
+import { primMaze } from './Mazes/primsMaze';
+
 class PathfindingVisualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -28,40 +29,23 @@ class PathfindingVisualizer extends React.Component {
             startNodePressed: false,
             finishNodePressed: false,
             navbarHeight: 0,
-            weightWallToggle:false,            
+            weightWallToggle: false,
         };
 
     }
 
-    navbarHeight = (height) => {
-        const navbarHeight = height;
-        this.setState({ navbarHeight });
-    }
-
+    // Toggle state functions
     toggleIsRunning = () => {
         let isRunning = !this.state.isRunning;
         this.setState({ isRunning });
     }
-    toggleWeightWallToggle = () =>{
+    toggleWeightWallToggle = () => {
         const weightWallToggle = !this.state.weightWallToggle;
-        this.setState({weightWallToggle});
+        this.setState({ weightWallToggle });
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getInitialGrid = (
-        rowCount = this.state.ROW_COUNT,
-        colCount = this.state.COLUMN_COUNT,
-    ) => {
-        const initialGrid = [];
-        for (let row = 0; row < rowCount; row++) {
-            const currentRow = [];
-            for (let col = 0; col < colCount; col++) {
-                currentRow.push(this.createNode(row, col));
-            }
-            initialGrid.push(currentRow);
-        }
-        return initialGrid;
-    };
-
+    // Function to create Node object
     createNode = (row, col) => {
         return {
             row,
@@ -77,8 +61,24 @@ class PathfindingVisualizer extends React.Component {
             isNode: true,
             weight: 1,
             costFromSource: (row === this.state.START_NODE_ROW && col === this.state.START_NODE_COL) ? 0 : Number.POSITIVE_INFINITY,
-            // extraClassName:"",
         };
+    };
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // grid related functions
+    getInitialGrid = (
+        rowCount = this.state.ROW_COUNT,
+        colCount = this.state.COLUMN_COUNT,
+    ) => {
+        const initialGrid = [];
+        for (let row = 0; row < rowCount; row++) {
+            const currentRow = [];
+            for (let col = 0; col < colCount; col++) {
+                currentRow.push(this.createNode(row, col));
+            }
+            initialGrid.push(currentRow);
+        }
+        return initialGrid;
     };
 
     clearGrid = () => {
@@ -94,27 +94,26 @@ class PathfindingVisualizer extends React.Component {
                         node.isVisited = false;
                         node.parent = null;
                         node.costFromSource = Number.POSITIVE_INFINITY;
-                        // nodeClassName = 'node';
                     }
                     else if (node.isStart || node.isFinish) {
                         node.parent = null;
                         node.isVisited = false;
-                        if(node.isStart) node.costFromSource = 0;
+                        if (node.isStart) node.costFromSource = 0;
                         else node.costFromSource = Number.POSITIVE_INFINITY;
                     }
                 }
             }
             this.setState({ grid });
-            // console.log(grid);
         }
     }
+
     clearWallsandWeights = () => {
         if (!this.state.isRunning) {
             let grid = this.state.grid;
 
             for (const row of grid) {
                 for (const node of row) {
-                    if (node.isWall ) {
+                    if (node.isWall) {
                         document.getElementById(
                             `node-${node.row}-${node.col}`
                         ).className = 'node';
@@ -122,18 +121,14 @@ class PathfindingVisualizer extends React.Component {
                         node.parent = null;
                         node.isWall = false;
                         node.costFromSource = Number.POSITIVE_INFINITY;
-                        // nodeClassName = 'node';
                     }
-                    if (node.weight !==1)
-                    {
+                    if (node.weight !== 1) {
                         node.weight = 1;
-                        node.costFromSource = node.isStart ? 0: Number.POSITIVE_INFINITY;
+                        node.costFromSource = node.isStart ? 0 : Number.POSITIVE_INFINITY;
                     }
                 }
             }
             this.setState({ grid });
-
-            // console.log(grid);
         }
     }
     resetGrid = () => {
@@ -149,7 +144,6 @@ class PathfindingVisualizer extends React.Component {
                         node.isVisited = false;
                         node.parent = null;
                         node.isWall = false;
-                        // nodeClassName = 'node';
                     }
                     else if (node.isStart || node.isFinish) {
                         node.parent = null;
@@ -158,10 +152,11 @@ class PathfindingVisualizer extends React.Component {
                 }
             }
             this.setState({ grid });
-            // console.log(grid);
         }
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // mouse event handlers
     onCellDown = (row, col) => {
         if (!this.state.isRunning && !this.state.weightWallToggle) {
 
@@ -178,7 +173,7 @@ class PathfindingVisualizer extends React.Component {
                     else {
                         document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
                         currentNode.isWall = true;
-                        currentNode.weight=1;
+                        currentNode.weight = 1;
                     }
                 }
                 else if (currentNode.isStart) {
@@ -190,17 +185,16 @@ class PathfindingVisualizer extends React.Component {
                 else if (currentNode.isFinish) {
                     const finishNodePressed = !this.state.finishNodePressed;
                     this.setState({ finishNodePressed });
-                    document.getElementById(`node-${row}-${col}`).className = 'node' ;
+                    document.getElementById(`node-${row}-${col}`).className = 'node';
                     currentNode.isFinish = false;
                 }
             }
         }
-        else if(!this.state.isRunning && this.state.weightWallToggle)
-        {
+        else if (!this.state.isRunning && this.state.weightWallToggle) {
             const grid = this.state.grid;
             const currentNode = grid[row][col];
-            if(!currentNode.isWall){
-                currentNode.weight = currentNode.weight+1;
+            if (!currentNode.isWall) {
+                currentNode.weight = currentNode.weight + 1;
             }
         }
     }
@@ -262,27 +256,18 @@ class PathfindingVisualizer extends React.Component {
         const finishNodePressed = false;
         this.setState({ mouseIsPressed, startNodePressed, finishNodePressed, grid });
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-    componentWillMount = () => {
-        // console.log("required", this.state.navbarHeight);
-        const ROW_COUNT = 2 * Math.floor(Math.floor((document.documentElement.clientHeight - this.state.navbarHeight) / 25) / 2) - 3;
-        const COLUMN_COUNT = 2 * Math.floor(Math.floor(document.documentElement.clientWidth / 25) / 2) - 1;
-        const START_NODE_ROW = Math.floor(ROW_COUNT / 2);
-        const FINISH_NODE_ROW = Math.floor(ROW_COUNT / 2);
-        const START_NODE_COL = Math.floor(COLUMN_COUNT / 4);
-        const FINISH_NODE_COL = Math.floor(3 * COLUMN_COUNT / 4);
-        this.setState({ ROW_COUNT, COLUMN_COUNT, START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL });
+    // animation functions
+    getNodesInShortestPathOrder(finishNode) {
+        const nodesInShortestPathOrder = [];
+        let currentNode = finishNode;
+        while (currentNode !== null) {
+            nodesInShortestPathOrder.unshift(currentNode);
+            currentNode = currentNode.parent;
+        }
+        return nodesInShortestPathOrder;
     }
-    componentDidMount = () => {
-        const grid = this.getInitialGrid();
-        this.setState({ grid });
-        console.log("required", this.state.navbarHeight);
-        // console.log(grid);
-    }
-
-
 
     visualize(algo) {
         if (!this.state.isRunning) {
@@ -298,9 +283,6 @@ class PathfindingVisualizer extends React.Component {
                 case 'Dijkstra':
                     visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
                     break;
-                // case 'AStar':
-                //     visitedNodesInOrder = AStar(grid, startNode, finishNode);
-                //     break;
                 case 'BFS':
                     visitedNodesInOrder = bfs(grid, startNode, finishNode);
                     break;
@@ -312,8 +294,6 @@ class PathfindingVisualizer extends React.Component {
                     break;
             }
 
-            // console.log(visitedNodesInOrder);
-            // console.log(grid);
             const nodesInShortestPathOrder = this.getNodesInShortestPathOrder(finishNode);
             nodesInShortestPathOrder.push('end');
             this.animate(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -337,20 +317,18 @@ class PathfindingVisualizer extends React.Component {
                     nodeClassName !== 'node node-start' &&
                     nodeClassName !== 'node node-finish'
                 ) {
-                    document.getElementById(`node-${node.row}-${node.col}`).className = 
-                        'node node-visited' ;
+                    document.getElementById(`node-${node.row}-${node.col}`).className =
+                        'node node-visited';
                 }
             }, 2 * i);
         }
     }
 
-    /******************** Create path from start to finish ********************/
     animateShortestPath(nodesInShortestPathOrder) {
         for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
             if (nodesInShortestPathOrder[i] === 'end') {
                 setTimeout(() => {
                     this.toggleIsRunning();
-                    // console.log("Completed");
                 }, i * 50);
             } else {
                 setTimeout(() => {
@@ -359,75 +337,65 @@ class PathfindingVisualizer extends React.Component {
                         `node-${node.row}-${node.col}`,
                     ).className;
                     if (
-                        nodeClassName !== 'node node-start'&&
+                        nodeClassName !== 'node node-start' &&
                         nodeClassName !== 'node node-finish'
                     ) {
-                        document.getElementById(`node-${node.row}-${node.col}`).className = 
+                        document.getElementById(`node-${node.row}-${node.col}`).className =
                             'node node-shortest-path';
                     }
                 }, i * 40);
             }
         }
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    getNodesInShortestPathOrder(finishNode) {
-        const nodesInShortestPathOrder = [];
-        let currentNode = finishNode;
-        while (currentNode !== null) {
-            nodesInShortestPathOrder.unshift(currentNode);
-            currentNode = currentNode.parent;
-        }
-        return nodesInShortestPathOrder;
-    }
+    // maze handler
+    mazes = (mazeType) => {
+        if (!this.state.isRunning) {
+            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
+            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
+            let grid = this.state.grid;
+            switch (mazeType) {
+                case 'maze':
+                    grid = maze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+                    break;
+                case 'hSkew':
+                    grid = horizontalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+                    break;
+                case 'vSkew':
+                    grid = verticalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+                    break;
+                case 'kruskals':
+                    grid = kruskalMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+                    break;
+                case 'prims':
+                    grid = primMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
+                    break;
+                case 'weightMaze':
+                    grid = weightMaze(grid);
+                    break;
+                case 'wallMaze':
+                    grid = wallMaze(grid);
+                    break;
+            }
 
-    mazify = () => {
-        if (!this.state.isRunning) {
-            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
-            const grid = maze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
             this.setState({ grid });
         }
     }
-    hSkewMazify = ()=>{
-        if(!this.state.isRunning){
-            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
-            const grid = horizontalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
-            this.setState({ grid });
-        }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // lifecycle functions
+    componentWillMount = () => {
+        const ROW_COUNT = 2 * Math.floor(Math.floor((document.documentElement.clientHeight) / 25) / 2) - 3;
+        const COLUMN_COUNT = 2 * Math.floor(Math.floor(document.documentElement.clientWidth / 25) / 2) - 1;
+        const START_NODE_ROW = Math.floor(ROW_COUNT / 2);
+        const FINISH_NODE_ROW = Math.floor(ROW_COUNT / 2);
+        const START_NODE_COL = Math.floor(COLUMN_COUNT / 4);
+        const FINISH_NODE_COL = Math.floor(3 * COLUMN_COUNT / 4);
+        this.setState({ ROW_COUNT, COLUMN_COUNT, START_NODE_ROW, START_NODE_COL, FINISH_NODE_ROW, FINISH_NODE_COL });
     }
-    vSkewMazify = () => {
-        if (!this.state.isRunning) {
-            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
-            const grid = verticalSkewMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
-            this.setState({ grid });
-        }
-    }
-    kruskalMazify = () =>{
-        if (!this.state.isRunning) {
-            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
-            const grid = kruskalMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
-            this.setState({ grid });
-        }
-    }
-    primMazify = () => {
-        if (!this.state.isRunning) {
-            const startNode = this.state.grid[this.state.START_NODE_ROW][this.state.START_NODE_COL];
-            const finishNode = this.state.grid[this.state.FINISH_NODE_ROW][this.state.FINISH_NODE_COL];
-            const grid = primMaze(this.state.ROW_COUNT, this.state.COLUMN_COUNT, startNode, finishNode);
-            this.setState({ grid });
-        }
-    }
-    weightMazify = ()=>{
-        let grid = this.state.grid;
-        grid = weightMaze(grid);
-        this.setState({grid});
-    }
-    wallMazify = ()=>{
-        let grid = this.state.grid;
-        grid = wallMaze(grid);
+    componentDidMount = () => {
+        const grid = this.getInitialGrid();
         this.setState({ grid });
     }
 
@@ -441,16 +409,16 @@ class PathfindingVisualizer extends React.Component {
                     clearGrid={() => this.clearGrid()}
                     resetGrid={() => this.resetGrid()}
                     clearWallsandWeights={() => this.clearWallsandWeights()}
-                    mazify={() => this.mazify()}
-                    hmazify={() => this.hSkewMazify()}
-                    vmazify={() => this.vSkewMazify()}
-                    kruskalMazify={() => this.kruskalMazify()}
-                    primMazify={() => this.primMazify()}
-                    weightMazify={()=>this.weightMazify()}
-                    wallMazify={() => this.wallMazify()}
+                    mazify={() => this.mazes('maze')}
+                    hmazify={() => this.mazes('hSkew')}
+                    vmazify={() => this.mazes('vSkew')}
+                    kruskalMazify={() => this.mazes('kruskals')}
+                    primMazify={() => this.mazes('prims')}
+                    weightMazify={() => this.mazes('weightMaze')}
+                    wallMazify={() => this.mazes('wallMaze')}
                     navbarHeight={this.navbarHeight}
-                    weightWallToggle={()=>this.toggleWeightWallToggle()}
-                    toggleCanvas = {()=> this.props.toggleCanvas()}
+                    weightWallToggle={() => this.toggleWeightWallToggle()}
+                    toggleCanvas={() => this.props.toggleCanvas()}
                     isCanvas={this.props.isCanvas}
                 ></Navbar>
                 <table className="center grid-container" >
@@ -487,16 +455,9 @@ class PathfindingVisualizer extends React.Component {
                         }
                     </tbody>
                 </table>
-                {/* <button onClick={() => this.visualize('BFS')}>BFS</button>
-                <button onClick={() => this.visualize('DFS')}>DFS</button>
-                <button onClick={() => this.clearGrid()}>Clear Gridd</button>
-                <button onClick={() => this.resetGrid()}>Reset Grid</button>
-                <button onClick={() => this.mazify()}>Maze</button> */}
-
             </div>
         )
     }
-
 }
 
 export default PathfindingVisualizer;

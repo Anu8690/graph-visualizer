@@ -1,7 +1,7 @@
 // with data structure
 // working fine
 import DisjointSet from '../../Data Structures/disjointSet';
-let disjointSet = new DisjointSet((node)=>{
+let disjointSet = new DisjointSet((node) => {
     return node.index;
 });
 function createNode(row, col, finishNode, startNode) {
@@ -64,9 +64,7 @@ function initialGrid(rowNum, colNum, startNode, finishNode) {
 }
 export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
     const grid = initialGrid(rowNum, colNum, startNode, finishNode);
-    // console.log(hWallSet.length);
-    // console.log(vWallSet.length);
-    while(hWallSet.length || vWallSet.length) {
+    while (hWallSet.length || vWallSet.length) {
         const random1 = Math.floor(Math.random() * 2);
         if (random1 && hWallSet.length) {
             const random2 = Math.floor(Math.random() * hWallSet.length);
@@ -74,9 +72,9 @@ export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
             const { row, col } = node;
             const neighborNodeRight = grid[row][col + 1];
             const neighborNodeLeft = grid[row][col - 1];
-            if (!disjointSet.inSameSet(neighborNodeLeft,neighborNodeRight)) {
+            if (!disjointSet.inSameSet(neighborNodeLeft, neighborNodeRight)) {
                 node.isWall = false;
-                disjointSet.union(neighborNodeLeft,neighborNodeRight);
+                disjointSet.union(neighborNodeLeft, neighborNodeRight);
             }
             hWallSet.splice(random2, 1);
         }
@@ -117,6 +115,5 @@ export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
             vWallSet.splice(random2, 1);
         }
     }
-    // console.log(grid);
     return grid;
 }

@@ -1,36 +1,34 @@
-function createNode (row,col,finishNode,startNode){
+function createNode(row, col, finishNode, startNode) {
     const srow = startNode.row;
     const scol = startNode.col;
     const frow = finishNode.row;
     const fcol = finishNode.col;
     return {
-        row : row,
-        col : col,
-        isVisited : false,
-        isWall : false,
+        row: row,
+        col: col,
+        isVisited: false,
+        isWall: false,
         parent: null,
         isNode: true,
         isStart:
             row === srow && col === scol,
         isFinish:
             row === frow && col === fcol,
-        weight :1,
+        weight: 1,
         costFromSource: (row === srow && col === scol) ? 0 : Number.POSITIVE_INFINITY,
     };
 }
 
 // assumed rowNum ans colNum are odd
 
-function initialGrid (rowNum,colNum,startNode,finishNode){
+function initialGrid(rowNum, colNum, startNode, finishNode) {
     const grid = [];
-    for(let r = 0;r<rowNum;r++)
-    {
+    for (let r = 0; r < rowNum; r++) {
         const row = [];
-        for(let c = 0; c<colNum;c++)
-        {
-            const newNode = createNode(r,c,finishNode,startNode);
-            if((r%2==0 || c%2==0 )) newNode.isWall = true;
-            if(newNode.isFinish || newNode.isStart) newNode.isWall = false;
+        for (let c = 0; c < colNum; c++) {
+            const newNode = createNode(r, c, finishNode, startNode);
+            if ((r % 2 == 0 || c % 2 == 0)) newNode.isWall = true;
+            if (newNode.isFinish || newNode.isStart) newNode.isWall = false;
             row.push(newNode);
         }
         grid.push(row);
@@ -38,19 +36,17 @@ function initialGrid (rowNum,colNum,startNode,finishNode){
     return grid;
 }
 
-function getChildren (node,grid){
-    const {row,col} = node;
+function getChildren(node, grid) {
+    const { row, col } = node;
     const childElements = [];
-    const childDirections = [[2,0],[0,2],[-2,0],[0,-2]];
-    
-    childDirections.forEach(direction=>{
+    const childDirections = [[2, 0], [0, 2], [-2, 0], [0, -2]];
+
+    childDirections.forEach(direction => {
         const childRow = row + direction[0];
         const childCol = col + direction[1];
-        if(childRow>=0 && childCol >=0 && childRow < grid.length && childCol < grid[0].length)
-        {
+        if (childRow >= 0 && childCol >= 0 && childRow < grid.length && childCol < grid[0].length) {
             const child = grid[childRow][childCol];
-            if(!child.isVisited)
-            {
+            if (!child.isVisited) {
                 // child.isVisited = true;
                 childElements.push(child);
             }
@@ -60,51 +56,45 @@ function getChildren (node,grid){
     return childElements;
 }
 
-function removeWall(nodeA,nodeB,grid){
-    
+function removeWall(nodeA, nodeB, grid) {
+
     const rowA = nodeA.row;
     const colA = nodeA.col;
     const rowB = nodeB.row;
     const colB = nodeB.col;
 
-    const r = Math.floor((rowA+rowB)/2);
-    const c = Math.floor((colA+colB)/2);
+    const r = Math.floor((rowA + rowB) / 2);
+    const c = Math.floor((colA + colB) / 2);
 
     grid[r][c].isWall = false;
     return;
 }
 
-export function maze(rowNum,colNum,startNode,finishNode){
-    const grid = initialGrid(rowNum,colNum,startNode,finishNode);
+export function maze(rowNum, colNum, startNode, finishNode) {
+    const grid = initialGrid(rowNum, colNum, startNode, finishNode);
     // console.log(grid);
-    
+
     let currentNode = grid[1][1];
     let dfsStack = [currentNode];
 
-    while(dfsStack.length)
-    {
-        const childElements = getChildren(currentNode,grid);
-        if(childElements.length)
-        {
+    while (dfsStack.length) {
+        const childElements = getChildren(currentNode, grid);
+        if (childElements.length) {
             const random = Math.floor(Math.random() * childElements.length);
-            // console.log(currentNode, childElements[random], removeWall(currentNode, childElements[random]));
-            removeWall(currentNode,childElements[random],grid);
+            removeWall(currentNode, childElements[random], grid);
             currentNode = childElements[random];
             currentNode.isVisited = true;
             dfsStack.push(currentNode);
         }
-        else
-        {
+        else {
             currentNode = dfsStack.pop();
         }
-        // console.log(currentNode);
     }
-    grid.forEach(row=>{
+    grid.forEach(row => {
         row.forEach(node => {
             node.isVisited = false;
         });
     });
-    // console.log(grid);
     return grid;
 }
 

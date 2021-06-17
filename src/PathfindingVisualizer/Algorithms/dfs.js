@@ -11,7 +11,6 @@ function getChildren(node, grid) {
         if (childRow >= 0 && childCol >= 0 && childRow < grid.length && childCol < grid[0].length) {
             const child = grid[childRow][childCol];
             if (!child.isVisited && !child.isWall) {
-                // child.isVisited = true;
                 childElements.push(child);
             }
         }

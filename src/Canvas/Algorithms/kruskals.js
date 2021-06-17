@@ -58,12 +58,6 @@ export function kruskalsMST(graph) {
         }
     });
 
-    // graph.forEach((node) => {
-    //     node.isVisited = false;
-    //     node.parent = null;
-    //     node.costFromSource = Number.POSITIVE_INFINITY;
-    // });
-
     return kruskalSelectedEdges;
 
 }

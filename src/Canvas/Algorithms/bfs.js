@@ -24,7 +24,6 @@ export function bfs(graph, startNode, finishNode) {
         visitedNodesInOrder.push(currentNode);
         visitedEdgesInOrder.push(createEdge(currentNode.parent, currentNode));
         if (currentNode === finishNode) {
-            // console.log(visitedEdgesInOrder);
             return { visitedNodesInOrder, visitedEdgesInOrder }
         };
         currentNode.children.forEach(childObject => {
@@ -32,7 +31,6 @@ export function bfs(graph, startNode, finishNode) {
             if(!child.isVisited){
                 child.isVisited = true;
                 child.parent = currentNode;
-                // console.log(child);
                 bfsQueue.push(child);
             }
         });

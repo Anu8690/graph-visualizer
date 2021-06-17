@@ -9,6 +9,7 @@ import { dijkstra } from './Algorithms/dijkstra';
 import { visitAllEdges } from "./Algorithms/visitAllEdges";
 import { kruskalsMST } from './Algorithms/kruskals';
 import { primsMST } from './Algorithms/prims';
+
 class Canvas extends React.Component {
     constructor(props) {
         super(props);
@@ -188,23 +189,23 @@ class Canvas extends React.Component {
             let MSTedges = [];
             switch (algo) {
                 case 'Kruskal':
-                {
-                    MSTedges = kruskalsMST(graphOfNodes);
-                    console.log(MSTedges);
-                    break;
-                }
+                    {
+                        MSTedges = kruskalsMST(graphOfNodes);
+                        console.log(MSTedges);
+                        break;
+                    }
                 case 'Prims':
-                {
-                    MSTedges = primsMST(graphOfNodes);
-                    break;
-                }
+                    {
+                        MSTedges = primsMST(graphOfNodes);
+                        break;
+                    }
                 default:
                     // do nothing
                     console.log("here");
                     break;
             }
-            if(MSTedges.length) this.animateMST(MSTedges);
-            else{
+            if (MSTedges.length) this.animateMST(MSTedges);
+            else {
                 this.setState({ isRunning: false });
                 console.log("ERROR");
             }
@@ -216,8 +217,8 @@ class Canvas extends React.Component {
         ctx.strokeStyle = '#ff0000';
         ctx.lineWidth = 5;
 
-        for(let i=0;i<MSTedges.length;i++){
-            setTimeout(()=>{
+        for (let i = 0; i < MSTedges.length; i++) {
+            setTimeout(() => {
                 const { nodeA, nodeB } = MSTedges[i];
                 const xA = nodeA.centerX;
                 const yA = nodeA.centerY;
@@ -228,13 +229,13 @@ class Canvas extends React.Component {
                 ctx.lineTo(xB, yB);
                 ctx.stroke();
                 ctx.closePath();
-            },i*500);
+            }, i * 500);
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             ctx.strokeStyle = '#000000';
             ctx.lineWidth = 1;
-            this.setState({isRunning:false});
-        },MSTedges.length*500+100);
+            this.setState({ isRunning: false });
+        }, MSTedges.length * 500 + 100);
     }
     toggleCanvas = () => {
         const canvasOrGrid = !this.state.canvasOrGrid;

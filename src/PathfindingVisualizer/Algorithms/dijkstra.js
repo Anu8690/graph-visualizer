@@ -26,7 +26,6 @@ function getChildren (grid,node){
                     childNode.parent = node;
                 }
                 childNode.costFromSource = Math.min(childNode.costFromSource, node.costFromSource + childNode.weight);
-                // console.log("parent = ",row,col,childNode.costFromSource)
             }
         }
     })
