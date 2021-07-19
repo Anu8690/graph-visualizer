@@ -1,7 +1,7 @@
 # Graph Visualizer
 
 I made this project because of the importance of graphs and their algorithms and how easy they can be if visualised properly.
-You can view the project [here](https://anu8690.github.io/path-finding-visualizer/).
+You can view the project [here](https://anu8690.github.io/graph-visualizer/).
 
 ## Project consists of two sections:- 
 
