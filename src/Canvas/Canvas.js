@@ -24,17 +24,18 @@ class Canvas extends React.Component {
             endNode: null,
         }
     }
+    // for togling b/w grid and canvas
+    toggleCanvas = () => {
+        const canvasOrGrid = !this.state.canvasOrGrid;
+        this.setState({ canvasOrGrid });
+        this.props.toggleCanvas();
+    }
+
     toggleEmptyTheGraph = () => {
         const emptyGraphCall = !this.state.emptyGraphCall;
         this.setState({ emptyGraphCall });
     }
-    clearCanvas = () => {
-        this.setState({ emptyGraphCall: true });
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext("2d");
-        context.fillStyle = "white";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-    }
+    
 
     settingStartNode = (startNode) => {
         this.setState({ startNode });
@@ -49,6 +50,13 @@ class Canvas extends React.Component {
     redrawGraph = () => {
         const graphOfNodes = this.state.graphOfNodes;
         visitAllEdges(graphOfNodes);
+    }
+    clearCanvas = () => {
+        this.setState({ emptyGraphCall: true });
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     visualize(algo) {
@@ -191,7 +199,6 @@ class Canvas extends React.Component {
                 case 'Kruskal':
                     {
                         MSTedges = kruskalsMST(graphOfNodes);
-                        console.log(MSTedges);
                         break;
                     }
                 case 'Prims':
@@ -201,13 +208,12 @@ class Canvas extends React.Component {
                     }
                 default:
                     // do nothing
-                    console.log("here");
                     break;
             }
             if (MSTedges.length) this.animateMST(MSTedges);
             else {
+                // some error occurred
                 this.setState({ isRunning: false });
-                console.log("ERROR");
             }
         }
     }
@@ -237,11 +243,8 @@ class Canvas extends React.Component {
             this.setState({ isRunning: false });
         }, MSTedges.length * 500 + 100);
     }
-    toggleCanvas = () => {
-        const canvasOrGrid = !this.state.canvasOrGrid;
-        this.setState({ canvasOrGrid });
-        this.props.toggleCanvas();
-    }
+
+
     render() {
         const height = document.documentElement.clientHeight - 50;
         const width = document.documentElement.clientWidth - 30;

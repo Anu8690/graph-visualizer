@@ -24,11 +24,10 @@ class PathfindingVisualizer extends React.Component {
             FINISH_NODE_ROW: 20,
             START_NODE_COL: 5,
             FINISH_NODE_COL: 30,
-            isRunning: false,
-            mouseIsPressed: false,
-            startNodePressed: false,
-            finishNodePressed: false,
-            navbarHeight: 0,
+            isRunning: false,                    // to check if any process is running at any instant
+            mouseIsPressed: false,               // to check if mouse is pressed at any instant
+            startNodePressed: false,             // to check if startnode is being dragged
+            finishNodePressed: false,            // to check if endnode is being dragged
             weightWallToggle: false,
         };
 
@@ -47,6 +46,7 @@ class PathfindingVisualizer extends React.Component {
 
     // Function to create Node object
     createNode = (row, col) => {
+        // returns a javascript object denoting a node
         return {
             row,
             col,
@@ -66,6 +66,7 @@ class PathfindingVisualizer extends React.Component {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // grid related functions
+    // creates initial grid
     getInitialGrid = (
         rowCount = this.state.ROW_COUNT,
         colCount = this.state.COLUMN_COUNT,
@@ -81,6 +82,7 @@ class PathfindingVisualizer extends React.Component {
         return initialGrid;
     };
 
+    // clear all animations from the grid
     clearGrid = () => {
         if (!this.state.isRunning) {
             let grid = this.state.grid;
@@ -106,7 +108,8 @@ class PathfindingVisualizer extends React.Component {
             this.setState({ grid });
         }
     }
-
+    
+    // clear all walls and weights from the grid
     clearWallsandWeights = () => {
         if (!this.state.isRunning) {
             let grid = this.state.grid;
@@ -131,6 +134,8 @@ class PathfindingVisualizer extends React.Component {
             this.setState({ grid });
         }
     }
+
+    // reset the grid
     resetGrid = () => {
         if (!this.state.isRunning) {
             let grid = this.state.grid;
@@ -144,10 +149,12 @@ class PathfindingVisualizer extends React.Component {
                         node.isVisited = false;
                         node.parent = null;
                         node.isWall = false;
+                        node.weight = 1;
                     }
                     else if (node.isStart || node.isFinish) {
                         node.parent = null;
                         node.isVisited = false;
+                        node.weight = 1;
                     }
                 }
             }
@@ -157,6 +164,7 @@ class PathfindingVisualizer extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // mouse event handlers
+    // fires on onMouseDown
     onCellDown = (row, col) => {
         if (!this.state.isRunning && !this.state.weightWallToggle) {
 
@@ -198,6 +206,8 @@ class PathfindingVisualizer extends React.Component {
             }
         }
     }
+
+    // fires on onMouseEnter
     onCellEnter = (row, col) => {
         if (!this.state.isRunning && this.state.mouseIsPressed) {
             const grid = this.state.grid;
@@ -222,6 +232,8 @@ class PathfindingVisualizer extends React.Component {
 
         }
     }
+
+    // fires on onMouseLeave
     onCellLeave = (row, col) => {
         const grid = this.state.grid;
         if (this.state.startNodePressed) {
@@ -235,6 +247,8 @@ class PathfindingVisualizer extends React.Component {
             else if (grid[row][col].isWall) document.getElementById(`node-${row}-${col}`).className = 'node node-wall';
         }
     }
+
+    // fires on onMouseUp
     onCellRelease = () => {
         const mouseIsPressed = false;
         const grid = this.state.grid;
@@ -259,6 +273,7 @@ class PathfindingVisualizer extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // animation functions
+    // backtraces shortest path from finishNode to startNode
     getNodesInShortestPathOrder(finishNode) {
         const nodesInShortestPathOrder = [];
         let currentNode = finishNode;
@@ -269,6 +284,7 @@ class PathfindingVisualizer extends React.Component {
         return nodesInShortestPathOrder;
     }
 
+    // resposible for animating the grid
     visualize(algo) {
         if (!this.state.isRunning) {
             this.clearGrid();
@@ -299,7 +315,6 @@ class PathfindingVisualizer extends React.Component {
             this.animate(visitedNodesInOrder, nodesInShortestPathOrder);
         }
     }
-
     animate(visitedNodesInOrder, nodesInShortestPathOrder) {
         for (let i = 0; i <= visitedNodesInOrder.length; i++) {
             if (i === visitedNodesInOrder.length) {
@@ -324,6 +339,7 @@ class PathfindingVisualizer extends React.Component {
         }
     }
 
+    // responsible for animating shortest path
     animateShortestPath(nodesInShortestPathOrder) {
         for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
             if (nodesInShortestPathOrder[i] === 'end') {
@@ -378,7 +394,6 @@ class PathfindingVisualizer extends React.Component {
                     grid = wallMaze(grid);
                     break;
             }
-
             this.setState({ grid });
         }
     }

@@ -95,7 +95,6 @@ export const CanvasProvider = ({ children }) => {
 
                 const start = whichNode(offsetX, offsetY);
                 setStartNode(start);
-                // console.log(start);
 
                 if (start) {
                     setIsDrawing(true);
@@ -116,18 +115,11 @@ export const CanvasProvider = ({ children }) => {
 
                 const { x, y } = currentCoordinates;
                 const end = whichNode(x, y);
-                // console.log(end);
 
                 if (!end) {
-                    // dont draw the edge
-                    // dont push it into edges
-                    console.log("end node is null");
                     contextRef.current.closePath();
                 }
                 else if (end.id === startNode.id) {
-                    // dont draw the edge
-                    // dont push it into edges
-                    console.log("end node = start node");
                     contextRef.current.closePath();
                 }
                 else {

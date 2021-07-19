@@ -72,7 +72,6 @@ function removeWall(nodeA, nodeB, grid) {
 
 export function maze(rowNum, colNum, startNode, finishNode) {
     const grid = initialGrid(rowNum, colNum, startNode, finishNode);
-    // console.log(grid);
 
     let currentNode = grid[1][1];
     let dfsStack = [currentNode];

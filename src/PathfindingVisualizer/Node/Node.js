@@ -1,3 +1,4 @@
+// jsx for each node AKA eac cel on the grid
 import React from 'react';
 import './Node.css'
 class Node extends React.Component {
@@ -26,7 +27,7 @@ class Node extends React.Component {
                 onMouseEnter={() => onMouseEnter(row, col)}
                 onMouseUp={() => onMouseUp()}
                 onMouseLeave={() => onMouseLeave(row, col)}
-            ><small>{weight === 1 ? "" : weight}</small></td> // It is used to create the grid.
+            ><b>{weight === 1 ? "" : weight}</b></td> // It is used to create the grid.
         );
     }
 }

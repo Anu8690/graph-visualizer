@@ -55,7 +55,6 @@ export function dijkstra(grid,startNode,finishNode){
     startNode.isVisited=true;
     while(dijkstraPQ.length)
     {
-
         const minIndex = extractMinIndex(dijkstraPQ);
         currentNode = dijkstraPQ[minIndex];
         if(currentNode.isFinish) return visitedNodesInOrder;

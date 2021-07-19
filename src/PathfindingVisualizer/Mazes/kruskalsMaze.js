@@ -70,11 +70,10 @@ function removeWall(nodeA, nodeB, grid) {
 }
 export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
     const grid = initialGrid(rowNum, colNum, startNode, finishNode);
-    // console.log(vWallSet);
     while (hWallSet.length || vWallSet.length) {
         const random1 = Math.floor(Math.random() * 2);
+        
         if (random1 && hWallSet.length) {
-            // console.log(random1);
             const random2 = Math.floor(Math.random() * hWallSet.length);
             const node = hWallSet[random2];
             const { row, col } = node;
@@ -89,7 +88,6 @@ export function kruskalMaze(rowNum, colNum, startNode, finishNode) {
             hWallSet.splice(random2, 1);
         }
         else if (!random1 && vWallSet.length) {
-            // console.log(random1);
             const random2 = Math.floor(Math.random() * vWallSet.length);
             const node = vWallSet[random2];
             const { row, col } = node;
