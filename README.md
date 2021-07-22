@@ -13,6 +13,8 @@ You can choose from the **Algorithms** that you want to visualise and then **Vis
 
 You can turn the grid into mazes obtained by different Algorithms like **Recursive Backtracking** or **Kruskal's Algorithm** or **Prim's Algorithm** and many others.
 
+[bfs](demo/bfs.JPG)
+
 ### 2. Canvas
 It is basically a canvas on which you can draw a graph of any kind you want. You can draw nodes and the connect the with edges.
 After that you can set start and end node and then select an algorithm to visualise the working of that algorithm.
