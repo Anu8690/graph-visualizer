@@ -13,9 +13,31 @@ You can choose from the **Algorithms** that you want to visualise and then **Vis
 
 You can turn the grid into mazes obtained by different Algorithms like **Recursive Backtracking** or **Kruskal's Algorithm** or **Prim's Algorithm** and many others.
 
-[bfs](demo/bfs.JPG)
+#### BFS
+![bfs](demo/bfs.JPG)
+
+#### DFS
+![dfs](demo/dfs.JPG)
+
+#### Dijkstra
+![dfs](demo/dijkstra.JPG)
+
+#### Mazes
+![dfs](demo/mazes.JPG)
 
 ### 2. Canvas
 It is basically a canvas on which you can draw a graph of any kind you want. You can draw nodes and the connect the with edges.
 After that you can set start and end node and then select an algorithm to visualise the working of that algorithm.
 you can also visualize the working of Kruskal's Algorithm and Prims Algorithm for Minimum Spanning Tree.
+
+#### BFS
+![bfs](demo/bfs1.JPG)
+
+#### DFS
+![dfs](demo/dfs1.JPG)
+
+#### Dijkstra
+![dfs](demo/dijkstra1.JPG)
+
+#### Minimum Spanning Tree Algorithms
+![dfs](demo/mst.JPG)
